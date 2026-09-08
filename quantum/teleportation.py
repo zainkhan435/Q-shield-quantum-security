@@ -10,7 +10,7 @@ def build_teleportation_circuit(
     phi: float = 0.0,
     measurement_basis: str = "Z",
     attack_hook: Optional[Callable[[QuantumCircuit, QuantumRegister, ClassicalRegister], None]] = None
-) -> TupleCircuit:
+) -> tuple:
     """
     Assembles a complete Quantum Teleportation circuit for Quantum Digital Signatures.
     
@@ -75,4 +75,4 @@ def build_teleportation_circuit(
     
     return circuit, qr, cr_alice, cr_bob
 
-TupleCircuit = tuple[QuantumCircuit, QuantumRegister, ClassicalRegister, ClassicalRegister]
+
