@@ -171,24 +171,64 @@ class BlochSphere3D {
 
     setupInteraction() {
         const dom = this.renderer.domElement;
+        dom.style.touchAction = 'pan-y';
+        dom.style.userSelect = 'none';
+        dom.style.webkitUserSelect = 'none';
 
-        dom.addEventListener('mousedown', (e) => {
+        // Pointer Events for 1-finger touch and mouse rotate
+        let isPointerActive = false;
+        let lastX = 0, lastY = 0;
+        let initialPinchDist = 0;
+
+        dom.addEventListener('pointerdown', (e) => {
             this.isDragging = true;
-            this.prevMouse = { x: e.clientX, y: e.clientY };
+            isPointerActive = true;
+            lastX = e.clientX;
+            lastY = e.clientY;
+            if (dom.setPointerCapture) {
+                try { dom.setPointerCapture(e.pointerId); } catch(err) {}
+            }
         });
 
-        window.addEventListener('mouseup', () => { this.isDragging = false; });
+        window.addEventListener('pointerup', (e) => {
+            this.isDragging = false;
+            isPointerActive = false;
+            if (dom.releasePointerCapture) {
+                try { dom.releasePointerCapture(e.pointerId); } catch(err) {}
+            }
+        });
 
-        dom.addEventListener('mousemove', (e) => {
-            if (!this.isDragging) return;
-            const dx = e.clientX - this.prevMouse.x;
-            const dy = e.clientY - this.prevMouse.y;
-
+        dom.addEventListener('pointermove', (e) => {
+            if (!isPointerActive || !this.sphereGroup) return;
+            const dx = e.clientX - lastX;
+            const dy = e.clientY - lastY;
             this.sphereGroup.rotation.y += dx * 0.008;
             this.sphereGroup.rotation.x += dy * 0.008;
-
-            this.prevMouse = { x: e.clientX, y: e.clientY };
+            lastX = e.clientX;
+            lastY = e.clientY;
         });
+
+        // Touch Pinch-to-Zoom
+        dom.addEventListener('touchstart', (e) => {
+            if (e.touches.length === 2) {
+                initialPinchDist = Math.hypot(
+                    e.touches[0].clientX - e.touches[1].clientX,
+                    e.touches[0].clientY - e.touches[1].clientY
+                );
+            }
+        }, { passive: true });
+
+        dom.addEventListener('touchmove', (e) => {
+            if (e.touches.length === 2 && initialPinchDist > 0) {
+                const currentDist = Math.hypot(
+                    e.touches[0].clientX - e.touches[1].clientX,
+                    e.touches[0].clientY - e.touches[1].clientY
+                );
+                const delta = (initialPinchDist - currentDist) * 0.01;
+                this.camera.position.z = Math.max(2.5, Math.min(8.0, this.camera.position.z + delta));
+                initialPinchDist = currentDist;
+            }
+        }, { passive: true });
 
         dom.addEventListener('wheel', (e) => {
             e.preventDefault();
@@ -196,6 +236,20 @@ class BlochSphere3D {
         }, { passive: false });
 
         window.addEventListener('resize', () => this.resize());
+        window.addEventListener('orientationchange', () => setTimeout(() => this.resize(), 100));
+
+        if (window.ResizeObserver && this.container) {
+            this.resizeObserver = new ResizeObserver(() => this.resize());
+            this.resizeObserver.observe(this.container);
+        }
+
+        if ('IntersectionObserver' in window && this.container) {
+            this.isVisible = true;
+            this.intersectionObserver = new IntersectionObserver(([entry]) => {
+                this.isVisible = entry.isIntersecting;
+            }, { threshold: 0.05 });
+            this.intersectionObserver.observe(this.container);
+        }
     }
 
     resize() {
@@ -210,6 +264,7 @@ class BlochSphere3D {
 
     animate() {
         requestAnimationFrame(this.animate);
+        if (this.isVisible === false) return;
         if (!this.isDragging && this.sphereGroup) {
             this.sphereGroup.rotation.y += 0.0012; // subtle continuous rotation
         }

@@ -169,12 +169,19 @@ function updateMetrics(exp) {
     // Threat Status
     if (threatBadge) {
         threatBadge.textContent = exp.threat_status;
+        const threatCell = threatBadge.closest('.cell-threat-status') || document.querySelector('.cell-threat-status');
+        if (threatCell) {
+            threatCell.classList.remove('status-secure', 'status-warning', 'status-danger');
+        }
         if (exp.threat_status === 'SECURE') {
             threatBadge.className = 'telemetry-pill pill-secure';
+            if (threatCell) threatCell.classList.add('status-secure');
         } else if (exp.threat_status === 'SUSPICIOUS') {
             threatBadge.className = 'telemetry-pill pill-warning';
+            if (threatCell) threatCell.classList.add('status-warning');
         } else {
             threatBadge.className = 'telemetry-pill pill-danger';
+            if (threatCell) threatCell.classList.add('status-danger');
         }
     }
     

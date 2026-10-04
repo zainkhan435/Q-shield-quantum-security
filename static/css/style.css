@@ -1300,6 +1300,61 @@ a:hover {
     box-shadow: 0 0 12px rgba(14, 165, 233, 0.4);
 }
 
+/* Shared 3D HUD / Control Button (Quantum Lab & General) */
+.btn-hud,
+.btn-hud-reset {
+    height: 42px;
+    min-height: 40px;
+    padding: 0 14px;
+    gap: 8px;
+    border-radius: 10px;
+    border: 1px solid var(--border-subtle);
+    background: var(--bg-surface);
+    color: var(--text-main);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 0.82rem;
+    font-weight: 600;
+    font-family: var(--font-sans);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    touch-action: manipulation;
+    user-select: none;
+    -webkit-user-select: none;
+    box-sizing: border-box;
+}
+
+.btn-hud:hover,
+.btn-hud-reset:hover {
+    background: var(--bg-hover);
+    border-color: var(--primary);
+    color: var(--primary);
+}
+
+.btn-hud:active,
+.btn-hud-reset:active {
+    transform: scale(0.96);
+}
+
+.btn-hud.active,
+.btn-hud-reset.active {
+    background: rgba(14, 165, 233, 0.25);
+    border-color: #0284c7;
+    color: #38bdf8;
+    box-shadow: 0 0 12px rgba(14, 165, 233, 0.4);
+}
+
+.btn-hud svg,
+.btn-hud-reset svg {
+    width: 18px;
+    height: 18px;
+    stroke: currentColor;
+    flex-shrink: 0;
+}
+
 /* Merged Tidy 2-Column Legend Grid below canvas */
 .legend-chip-grid {
     display: grid;
@@ -1428,13 +1483,57 @@ a:hover {
     border-right: none;
 }
 
+.telemetry-cell.cell-threat-status {
+    border-left: 3px solid var(--status-secure);
+}
+
+.cell-threat-status.status-secure {
+    border-left: 3px solid var(--status-secure);
+}
+
+.cell-threat-status.status-warning {
+    border-left: 3px solid var(--status-warning);
+}
+
+.cell-threat-status.status-danger {
+    border-left: 3px solid var(--status-danger);
+}
+
+.cell-fidelity .label-long {
+    display: inline;
+}
+
+.cell-fidelity .label-short {
+    display: none;
+}
+
 .telemetry-label {
     font-size: 0.68rem;
     font-weight: 700;
     font-family: var(--font-mono);
     color: var(--text-muted);
     letter-spacing: 0.5px;
+    text-transform: uppercase;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
     margin-bottom: 4px;
+    line-height: 1.2;
+}
+
+.telemetry-label .info-tooltip {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+    min-height: 44px;
+    margin: -14px -14px -14px -4px;
+    font-size: 16px;
+    cursor: help;
+    touch-action: manipulation;
+    flex-shrink: 0;
 }
 
 .telemetry-val-group {
@@ -1656,14 +1755,20 @@ a:hover {
     font-size: 0.85rem;
     font-weight: 600;
     color: var(--text-main);
+    white-space: normal;
+    overflow-wrap: break-word;
+    word-break: break-word;
+    line-height: 1.3;
 }
 
 .step-detail {
     font-size: 0.74rem;
     color: var(--text-muted);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    white-space: normal;
+    overflow-wrap: break-word;
+    word-break: break-word;
+    line-height: 1.35;
+    margin-top: 2px;
 }
 
 /* Bloch Preview */
@@ -4876,11 +4981,23 @@ body.landing-page-body .main-content {
     }
 
     .telemetry-strip {
+        background: transparent;
+        border: none;
+        box-shadow: none;
+        display: grid;
         grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+        overflow: visible;
     }
 
-    .telemetry-cell:nth-child(3) {
-        border-right: none;
+    .telemetry-cell {
+        background: var(--bg-surface);
+        border: 1px solid var(--border-subtle);
+        border-radius: 14px;
+        padding: 14px 16px;
+        box-sizing: border-box;
+        border-right: 1px solid var(--border-subtle);
+        height: 100%;
     }
 
     .split-grid {
@@ -5231,23 +5348,201 @@ body.landing-page-body .main-content {
         font-size: 12px;
     }
 
-    /* Telemetry strip single column */
+    /* Mobile Stat Panel (<640px) - Separate Equal-Height Cards */
     .telemetry-strip {
-        grid-template-columns: 1fr;
+        background: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+        display: grid !important;
+        grid-template-columns: 1fr 1fr !important;
+        gap: 12px !important;
+        overflow: visible !important;
     }
 
     .telemetry-cell {
-        border-right: none;
+        background: var(--bg-surface);
+        border: 1px solid var(--border-subtle);
+        border-radius: 14px;
+        padding: 14px;
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: stretch;
+        min-width: 0;
+        height: 100%;
+        border-right: 1px solid var(--border-subtle);
         border-bottom: 1px solid var(--border-subtle);
-        padding: 12px 14px;
     }
 
-    .telemetry-cell:last-child {
-        border-bottom: none;
+    .telemetry-label {
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        white-space: nowrap;
+        color: var(--text-muted);
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        line-height: 1;
+        margin-bottom: 6px;
     }
 
-    .telemetry-val {
-        font-size: 1.05rem;
+    .telemetry-label .info-tooltip {
+        width: 44px;
+        height: 44px;
+        min-width: 44px;
+        min-height: 44px;
+        margin: -14px -14px -14px -4px;
+        font-size: 16px;
+    }
+
+    /* Row 1: Threat Status (full width) */
+    .cell-threat-status {
+        grid-column: 1 / -1 !important;
+        grid-row: 1 !important;
+        border-left: 3px solid var(--status-secure);
+    }
+
+    .cell-threat-status.status-secure {
+        border-left: 3px solid var(--status-secure) !important;
+    }
+
+    .cell-threat-status.status-warning {
+        border-left: 3px solid var(--status-warning) !important;
+    }
+
+    .cell-threat-status.status-danger {
+        border-left: 3px solid var(--status-danger) !important;
+    }
+
+    .cell-threat-status #metric-threat-status {
+        white-space: nowrap;
+        font-size: 13px;
+        font-weight: 700;
+        border-radius: 9999px;
+        padding: 4px 12px;
+        display: inline-flex;
+        width: fit-content;
+        max-width: 100%;
+        line-height: 1.3;
+    }
+
+    .cell-threat-status #metric-reason {
+        font-size: 13px;
+        color: var(--text-muted);
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        line-height: 1.4;
+        margin-top: 4px;
+    }
+
+    /* Row 2: QBER & Z-Score */
+    .cell-qber {
+        grid-column: 1 !important;
+        grid-row: 2 !important;
+    }
+
+    .cell-zscore {
+        grid-column: 2 !important;
+        grid-row: 2 !important;
+    }
+
+    .cell-qber .telemetry-val,
+    .cell-zscore .telemetry-val {
+        font-size: 28px;
+        font-weight: 800;
+        line-height: 1.1;
+        margin-bottom: 2px;
+    }
+
+    .cell-qber .telemetry-sub,
+    .cell-zscore .telemetry-sub {
+        font-size: 12px;
+        color: var(--text-muted);
+        line-height: 1.35;
+        white-space: normal;
+    }
+
+    /* Row 3: Verification & Fidelity */
+    .cell-validity {
+        grid-column: 1 !important;
+        grid-row: 3 !important;
+    }
+
+    .cell-fidelity {
+        grid-column: 2 !important;
+        grid-row: 3 !important;
+    }
+
+    .cell-validity .telemetry-val,
+    .cell-fidelity .telemetry-val {
+        font-size: 24px;
+        font-weight: 800;
+        line-height: 1.1;
+        margin-bottom: 4px;
+    }
+
+    .cell-validity .telemetry-sub,
+    .cell-fidelity .telemetry-sub {
+        font-size: 12px;
+        color: var(--text-muted);
+        line-height: 1.35;
+        white-space: normal;
+    }
+
+    /* Row 4: Backend Engine (full width) */
+    .cell-backend {
+        grid-column: 1 / -1 !important;
+        grid-row: 4 !important;
+    }
+
+    .cell-backend .backend-header-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+        flex-wrap: nowrap;
+        gap: 8px;
+    }
+
+    .cell-backend #metric-backend {
+        font-size: 14px;
+        font-weight: 700;
+        color: var(--text-main);
+        white-space: nowrap;
+    }
+
+    .cell-backend .telemetry-sub {
+        font-size: 12px;
+        color: var(--text-muted);
+        margin-top: 4px;
+        white-space: nowrap;
+    }
+
+    .cell-fidelity .label-long {
+        display: none;
+    }
+
+    .cell-fidelity .label-short {
+        display: inline;
+    }
+
+    /* 3D HUD Reset Button mobile: icon only */
+    .btn-hud,
+    .btn-hud-reset {
+        width: 44px;
+        height: 44px;
+        min-width: 44px;
+        min-height: 44px;
+        padding: 0;
+    }
+
+    .btn-hud .btn-hud-label,
+    .btn-hud-reset .btn-hud-label {
+        display: none;
     }
 
     /* Events stream - horizontal scroll */
@@ -5937,14 +6232,23 @@ body.landing-page-body .main-content {
     .gemini-copilot-trigger {
         bottom: 24px;
         right: 16px;
-        padding: 10px 14px;
+        padding: 0;
+        width: 48px;
+        height: 48px;
+        min-width: 48px;
+        min-height: 48px;
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
         font-size: 0.8rem;
         box-shadow: 0 4px 20px rgba(56, 189, 248, 0.4);
         z-index: 1050;
     }
 
-    .gemini-copilot-trigger .copilot-label {
-        display: none;
+    .gemini-copilot-trigger .copilot-label,
+    .gemini-copilot-trigger .copilot-badge {
+        display: none !important;
     }
 
     /* Half-Sheet Modal (consumes half the screen, sleek drawer UI) */

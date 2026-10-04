@@ -171,7 +171,7 @@
     ============================================================ -->
     <section class="telemetry-strip-section">
         <div class="telemetry-strip">
-            <div class="telemetry-cell">
+            <div class="telemetry-cell cell-qber">
                 <span class="telemetry-label">
                     OBSERVED QBER
                     <span class="info-tooltip" tabindex="0">ℹ<span class="tooltip-text">Quantum Bit Error Rate measures orthogonal measurement errors against the 11.0% security cutoff. Expected noise: 3.50% ± 1.2%.</span></span>
@@ -183,7 +183,7 @@
                 <span class="telemetry-sub">Cutoff: 11.0% · Noise: 3.50% ± 1.2%</span>
             </div>
 
-            <div class="telemetry-cell">
+            <div class="telemetry-cell cell-validity">
                 <span class="telemetry-label">
                     VERIFICATION
                     <span class="info-tooltip" tabindex="0">ℹ<span class="tooltip-text">Deterministic parity check between Bob and Charlie to confirm digital signature eigenstate integrity.</span></span>
@@ -194,26 +194,26 @@
                 <span class="telemetry-sub">Digital signature parity</span>
             </div>
 
-            <div class="telemetry-cell">
+            <div class="telemetry-cell cell-threat-status status-secure">
                 <span class="telemetry-label">
                     THREAT STATUS
                     <span class="info-tooltip" tabindex="0">ℹ<span class="tooltip-text">Protocol decision derived from QBER thresholds, Bell parity, and binomial hypothesis testing.</span></span>
                 </span>
                 <div class="telemetry-val-group">
-                    <span id="metric-threat-status" class="telemetry-pill pill-secure">SECURE</span>
+                    <span id="metric-threat-status" class="telemetry-pill pill-secure">SECURE (STANDBY)</span>
                 </div>
                 <span id="metric-reason" class="telemetry-sub">Nominal quantum channel</span>
             </div>
 
-            <div class="telemetry-cell">
-                <span class="telemetry-label">BACKEND ENGINE</span>
-                <div class="telemetry-val-group">
-                    <span id="metric-backend" class="telemetry-val font-mono">QISKIT AER</span>
+            <div class="telemetry-cell cell-backend">
+                <div class="backend-header-row">
+                    <span class="telemetry-label">BACKEND ENGINE</span>
+                    <span id="metric-backend" class="telemetry-val font-mono">Qiskit Aer 2.5</span>
                 </div>
                 <span class="telemetry-sub">AerSimulator (Statevector)</span>
             </div>
 
-            <div class="telemetry-cell">
+            <div class="telemetry-cell cell-zscore">
                 <span class="telemetry-label">
                     STATISTICAL Z-SCORE
                     <span class="info-tooltip" tabindex="0">ℹ<span class="tooltip-text">Standard deviations from expected baseline noise (3.50% ± 1.2%). Z ≥ 3.0σ statistically detects eavesdropping at 99.7% confidence.</span></span>
@@ -222,12 +222,13 @@
                     <span id="metric-z-score" class="telemetry-val">0.00σ</span>
                     <span id="metric-z-tag" class="telemetry-pill pill-neutral">Nominal</span>
                 </div>
-                <span class="telemetry-sub">Confidence Limit: 3.0σ</span>
+                <span class="telemetry-sub">Cutoff: 3.0σ · 99.7% Conf.</span>
             </div>
 
-            <div class="telemetry-cell">
+            <div class="telemetry-cell cell-fidelity">
                 <span class="telemetry-label">
-                    FIDELITY / ACCURACY
+                    <span class="label-long">FIDELITY / ACCURACY</span>
+                    <span class="label-short">FIDELITY</span>
                     <span class="info-tooltip" tabindex="0">ℹ<span class="tooltip-text">Quantum state fidelity Tr[ρσ] measuring overlap with expected signature eigenstate.</span></span>
                 </span>
                 <div class="telemetry-val-group">
