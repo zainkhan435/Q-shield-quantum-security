@@ -84,3 +84,26 @@ async function handleLogout() {
     }
 }
 
+// Mobile Navigation Drawer Toggle
+function toggleMobileNav() {
+    const drawer = document.getElementById('mobile-nav-drawer');
+    const backdrop = document.getElementById('mobile-nav-backdrop');
+    const btn = document.getElementById('mobile-hamburger-btn');
+    if (!drawer) return;
+    
+    const isOpen = drawer.classList.contains('open');
+    if (isOpen) {
+        drawer.classList.remove('open');
+        if (backdrop) backdrop.classList.remove('open');
+        if (btn) btn.classList.remove('active');
+        document.body.style.overflow = '';
+    } else {
+        drawer.classList.add('open');
+        if (backdrop) backdrop.classList.add('open');
+        if (btn) btn.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+}
+
+window.toggleMobileNav = toggleMobileNav;
+

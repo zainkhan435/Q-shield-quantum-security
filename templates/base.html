@@ -23,7 +23,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css', v=4) }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css', v=5) }}">
     {% block head %}{% endblock %}
 </head>
 <body class="{% block body_class %}{% endblock %}">
@@ -59,41 +59,64 @@
                     {{ session.get('user_email', 'admin@qshield.security') }}
                 </span>
                 <button id="logout-btn" class="btn-logout" onclick="handleLogout()">Logout</button>
+                <button class="mobile-hamburger-btn" id="mobile-hamburger-btn" onclick="toggleMobileNav()" aria-label="Toggle navigation menu" title="Menu">
+                    <span class="hamburger-bar"></span>
+                    <span class="hamburger-bar"></span>
+                    <span class="hamburger-bar"></span>
+                </button>
             </div>
         </div>
     </header>
+
+    <!-- Mobile Navigation Drawer & Backdrop -->
+    <div id="mobile-nav-backdrop" class="mobile-nav-backdrop" onclick="toggleMobileNav()"></div>
+    <aside id="mobile-nav-drawer" class="mobile-nav-drawer" aria-label="Mobile Navigation" aria-hidden="true">
+        <div class="mobile-nav-header">
+            <div class="nav-brand">
+                <span class="brand-logo-text">Q-SHIELD</span>
+                <span class="brand-sub">SIH26141</span>
+            </div>
+            <button type="button" class="mobile-nav-close-btn" onclick="toggleMobileNav()" aria-label="Close navigation">&times;</button>
+        </div>
+        <nav class="mobile-nav-list">
+            <a href="{{ url_for('dashboard.dashboard_view') }}" class="mobile-nav-link {% if request.path == '/dashboard' %}active{% endif %}" onclick="toggleMobileNav()">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+                <span>Overview</span>
+            </a>
+            <a href="{{ url_for('dashboard.lab_view') }}" class="mobile-nav-link {% if request.path in ['/lab', '/quantum-lab'] %}active{% endif %}" onclick="toggleMobileNav()">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 2v7.31M14 2v7.31M8.5 2h7M14 9.3a6.5 6.5 0 1 1-4 0"></path></svg>
+                <span>Quantum Lab</span>
+            </a>
+            <a href="{{ url_for('dashboard.experiment_view') }}" class="mobile-nav-link {% if request.path in ['/threat-detection', '/experiment'] %}active{% endif %}" onclick="toggleMobileNav()">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                <span>Threat Detection</span>
+            </a>
+            <a href="{{ url_for('dashboard.history_view') }}" class="mobile-nav-link {% if request.path == '/history' %}active{% endif %}" onclick="toggleMobileNav()">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                <span>Experiment History</span>
+            </a>
+            <a href="{{ url_for('dashboard.documentation_view') }}" class="mobile-nav-link {% if request.path == '/documentation' %}active{% endif %}" onclick="toggleMobileNav()">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+                <span>Documentation</span>
+            </a>
+        </nav>
+        <div class="mobile-nav-footer">
+            <div class="mobile-user-status">
+                <span class="pulse-dot"></span>
+                <span>System Online · Qiskit Aer</span>
+            </div>
+            <div class="mobile-user-pill">
+                {{ session.get('user_email', 'admin@qshield.security') }}
+            </div>
+            <button type="button" class="btn-logout mobile-logout-btn" onclick="handleLogout()">Logout</button>
+        </div>
+    </aside>
     {% endif %}
 
     <!-- Main Application Canvas -->
     <main class="main-content">
         {% block content %}{% endblock %}
     </main>
-
-    {% if session.get('user_id') %}
-    <!-- Mobile Bottom Tab Bar -->
-    <nav class="bottom-tab-bar" aria-label="Mobile Navigation">
-        <a href="{{ url_for('dashboard.dashboard_view') }}" class="bottom-tab-item {% if request.path == '/dashboard' %}active{% endif %}">
-            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
-            <span>Overview</span>
-        </a>
-        <a href="{{ url_for('dashboard.lab_view') }}" class="bottom-tab-item {% if request.path in ['/lab', '/quantum-lab'] %}active{% endif %}">
-            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 2v7.31M14 2v7.31M8.5 2h7M14 9.3a6.5 6.5 0 1 1-4 0"></path></svg>
-            <span>Lab</span>
-        </a>
-        <a href="{{ url_for('dashboard.experiment_view') }}" class="bottom-tab-item {% if request.path in ['/threat-detection', '/experiment'] %}active{% endif %}">
-            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
-            <span>Threats</span>
-        </a>
-        <a href="{{ url_for('dashboard.history_view') }}" class="bottom-tab-item {% if request.path == '/history' %}active{% endif %}">
-            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-            <span>History</span>
-        </a>
-        <a href="{{ url_for('dashboard.documentation_view') }}" class="bottom-tab-item {% if request.path == '/documentation' %}active{% endif %}">
-            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
-            <span>More</span>
-        </a>
-    </nav>
-    {% endif %}
 
     <!-- Toast Notifications -->
     <div id="toast-container" class="toast-container" aria-live="polite" aria-atomic="true"></div>
@@ -115,8 +138,14 @@
         <span class="copilot-tooltip-hint" id="copilot-hint">Need help? Tap here! ✨</span>
     </button>
 
-    <!-- Gemini AI Chat Window -->
+    <!-- Copilot Modal Backdrop (Mobile/Tablet) -->
+    <div id="copilot-backdrop" class="copilot-backdrop" onclick="toggleGeminiCopilot()"></div>
+
+    <!-- Gemini AI Chat Window (Half-Sheet on Mobile, Floating Card on Desktop) -->
     <div id="gemini-copilot-modal" class="gemini-copilot-modal" aria-hidden="true">
+        <div class="copilot-sheet-handle-bar">
+            <div class="copilot-sheet-handle"></div>
+        </div>
         <div class="copilot-header">
             <div class="copilot-header-info">
                 <div class="copilot-avatar">

@@ -13,6 +13,7 @@
         const form = document.getElementById('copilot-form');
         const input = document.getElementById('copilot-input');
         const closeBtn = document.getElementById('copilot-close-btn');
+        const backdrop = document.getElementById('copilot-backdrop');
 
         if (!trigger || !modal) return;
 
@@ -21,15 +22,20 @@
             if (isCopilotOpen) {
                 modal.classList.add('open');
                 trigger.classList.add('active');
+                if (backdrop) backdrop.classList.add('open');
                 if (input) setTimeout(() => input.focus(), 150);
             } else {
                 modal.classList.remove('open');
                 trigger.classList.remove('active');
+                if (backdrop) backdrop.classList.remove('open');
             }
         };
 
         if (closeBtn) {
             closeBtn.addEventListener('click', window.toggleGeminiCopilot);
+        }
+        if (backdrop) {
+            backdrop.addEventListener('click', window.toggleGeminiCopilot);
         }
 
         if (form) {
