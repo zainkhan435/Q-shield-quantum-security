@@ -62,6 +62,34 @@
                         <span class="badge-val">Alice · Bob · Charlie</span>
                     </div>
                 </div>
+
+                <!-- Latest Audit Summary Card (Balances left hero column height with 3D card) -->
+                <div class="hero-audit-card">
+                    <div class="hero-audit-header">
+                        <div class="hero-audit-title-group">
+                            <span class="pulse-dot"></span>
+                            <span class="hero-audit-title">LATEST QUANTUM STATE AUDIT</span>
+                        </div>
+                        <span class="hero-audit-status-badge">SECURE · VERIFIED</span>
+                    </div>
+                    <div class="hero-audit-grid">
+                        <div class="hero-audit-cell">
+                            <span class="hero-audit-metric-label">QBER</span>
+                            <span class="hero-audit-metric-val font-mono">2.1%</span>
+                            <span class="hero-audit-metric-sub">Cutoff: 11.0%</span>
+                        </div>
+                        <div class="hero-audit-cell">
+                            <span class="hero-audit-metric-label">Z-SCORE</span>
+                            <span class="hero-audit-metric-val font-mono">0.82σ</span>
+                            <span class="hero-audit-metric-sub">Threshold: 3.0σ</span>
+                        </div>
+                        <div class="hero-audit-cell">
+                            <span class="hero-audit-metric-label">PARITY</span>
+                            <span class="hero-audit-metric-val font-mono">99.4%</span>
+                            <span class="hero-audit-metric-sub">Eigenstate Match</span>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <!-- Right: Signature 3D Quantum Globe / Network Centerpiece -->
@@ -81,12 +109,13 @@
 
                     <!-- Tap to interact mobile touch overlay (shown when touch mode is inactive) -->
                     <div id="globe-touch-overlay" class="globe-touch-overlay">
-                        <button type="button" class="btn-touch-interact" id="btn-touch-interact" aria-label="Tap to interact with 3D Globe">
+                        <button type="button" class="btn-touch-interact" id="btn-touch-interact" aria-label="Interact with 3D Globe">
                             <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                                 <circle cx="12" cy="12" r="10"></circle>
                                 <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
                             </svg>
-                            <span>Tap to interact</span>
+                            <span class="touch-hint-touch">Tap to interact</span>
+                            <span class="touch-hint-desktop">Drag to rotate</span>
                         </button>
                     </div>
 
@@ -129,7 +158,7 @@
                     <div class="legend-chip" title="Alice (Signer)"><span class="dot dot-alice">●</span><span class="legend-chip-text">Alice (Signer)</span></div>
                     <div class="legend-chip" title="Bob (Verifier 1)"><span class="dot dot-bob">●</span><span class="legend-chip-text">Bob (Verifier 1)</span></div>
                     <div class="legend-chip" title="Charlie (Verifier 2)"><span class="dot dot-charlie">●</span><span class="legend-chip-text">Charlie (Verifier 2)</span></div>
-                    <div class="legend-chip" title="Eve (Adversary)"><span class="dot dot-eve">●</span><span class="legend-chip-text">Eve (Adversary)</span></div>
+                    <div class="legend-chip" title="Appears during attack scenarios"><span class="dot dot-eve">●</span><span class="legend-chip-text">Eve (Adversary)</span></div>
                     <div class="legend-chip" title="Quantum Arc"><span class="legend-sample line-quantum"></span><span class="legend-chip-text">Quantum Arc</span></div>
                     <div class="legend-chip" title="Classical Channel"><span class="legend-sample line-classical"></span><span class="legend-chip-text">Classical Channel</span></div>
                 </div>

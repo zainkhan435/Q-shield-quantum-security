@@ -97,7 +97,8 @@
 
                 <!-- Tap to interact hint overlay (Mobile touch protection) -->
                 <div class="touch-interact-overlay" id="touch-interact-overlay" onclick="enableTouchInteraction(event)">
-                    <span>Tap to interact with 3D Globe</span>
+                    <span class="touch-hint-touch">Tap to interact with 3D Globe</span>
+                    <span class="touch-hint-desktop">Drag to rotate</span>
                 </div>
 
                 <!-- 3) Fullscreen button at top-right of canvas -->
@@ -135,7 +136,7 @@
                         <span class="legend-sample dot-charlie">●</span>
                         <span class="legend-text">Charlie (Verifier 2)</span>
                     </div>
-                    <div class="legend-grid-item">
+                    <div class="legend-grid-item" title="Appears during attack scenarios">
                         <span class="legend-sample dot-eve">●</span>
                         <span class="legend-text">Eve (Adversary Intercept)</span>
                     </div>

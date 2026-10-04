@@ -372,8 +372,54 @@ class QuantumNetwork3D {
             isEve: true
         });
 
-        // Eve is hidden by default in legitimate mode
-        this.nodes.eve.group.visible = false;
+        // Eve is visible as a dim greyed node in idle state
+        this.nodes.eve.group.visible = true;
+        this.setEveAttackState(false);
+    }
+
+    setEveAttackState(isAttack) {
+        if (!this.nodes.eve) return;
+        const eve = this.nodes.eve;
+        eve.group.visible = true;
+        if (isAttack) {
+            if (eve.core && eve.core.material) {
+                eve.core.material.color.setHex(0xef4444);
+                eve.core.material.emissive.setHex(0xef4444);
+                eve.core.material.emissiveIntensity = 0.7;
+            }
+            if (eve.identityMesh && eve.identityMesh.material) {
+                eve.identityMesh.material.color.setHex(0xef4444);
+                eve.identityMesh.material.opacity = 0.55;
+            }
+            if (eve.ring && eve.ring.material) {
+                eve.ring.material.color.setHex(0xef4444);
+                eve.ring.material.opacity = 0.55;
+            }
+            if (eve.aura && eve.aura.material) {
+                eve.aura.material.color.setHex(0xef4444);
+                eve.aura.material.opacity = 0.65;
+            }
+            this.updateNodeBadge(eve, 'EVE', '⚠ ACTIVE ATTACK', '#ef4444', '#fca5a5');
+        } else {
+            if (eve.core && eve.core.material) {
+                eve.core.material.color.setHex(0x64748b);
+                eve.core.material.emissive.setHex(0x334155);
+                eve.core.material.emissiveIntensity = 0.2;
+            }
+            if (eve.identityMesh && eve.identityMesh.material) {
+                eve.identityMesh.material.color.setHex(0x64748b);
+                eve.identityMesh.material.opacity = 0.25;
+            }
+            if (eve.ring && eve.ring.material) {
+                eve.ring.material.color.setHex(0x64748b);
+                eve.ring.material.opacity = 0.25;
+            }
+            if (eve.aura && eve.aura.material) {
+                eve.aura.material.color.setHex(0x475569);
+                eve.aura.material.opacity = 0.15;
+            }
+            this.updateNodeBadge(eve, 'EVE', '⚠ ADVERSARY (IDLE)', '#64748b', '#94a3b8');
+        }
     }
 
     createNodeEntity({ name, role, roleGlyph, shapeType, subrole, color, position, leaderOffset, isEve = false }) {
@@ -899,7 +945,7 @@ class QuantumNetwork3D {
         // Tap outside to exit touch interaction
         document.addEventListener('pointerdown', (e) => {
             if (!this.touchInteractionActive || this.isFullscreen) return;
-            const card = document.getElementById('globe-viewport-card');
+            const card = this.container ? this.container.closest('.globe-viewport-card, .threat-canvas-wrapper, .threat-3d-panel') : null;
             if (card && !card.contains(e.target)) {
                 this.disableTouchInteraction();
             }
@@ -911,9 +957,10 @@ class QuantumNetwork3D {
         if (this.renderer && this.renderer.domElement) {
             this.renderer.domElement.style.touchAction = 'none';
         }
-        const overlay = document.getElementById('globe-touch-overlay');
+        const parent = this.container ? this.container.parentElement : null;
+        const overlay = (parent && parent.querySelector('.globe-touch-overlay, .touch-interact-overlay')) || document.getElementById('globe-touch-overlay');
         if (overlay) overlay.style.display = 'none';
-        const activeBar = document.getElementById('globe-touch-active-bar');
+        const activeBar = (parent && parent.querySelector('.globe-touch-active-bar')) || document.getElementById('globe-touch-active-bar');
         if (activeBar && !this.isFullscreen) activeBar.style.display = 'flex';
     }
 
@@ -925,9 +972,10 @@ class QuantumNetwork3D {
         if (this.renderer && this.renderer.domElement) {
             this.renderer.domElement.style.touchAction = 'pan-y';
         }
-        const overlay = document.getElementById('globe-touch-overlay');
+        const parent = this.container ? this.container.parentElement : null;
+        const overlay = (parent && parent.querySelector('.globe-touch-overlay, .touch-interact-overlay')) || document.getElementById('globe-touch-overlay');
         if (overlay) overlay.style.display = 'block';
-        const activeBar = document.getElementById('globe-touch-active-bar');
+        const activeBar = (parent && parent.querySelector('.globe-touch-active-bar')) || document.getElementById('globe-touch-active-bar');
         if (activeBar) activeBar.style.display = 'none';
     }
 
@@ -1228,11 +1276,10 @@ class QuantumNetwork3D {
         const isForgery = (scenarioName === "Signature Forgery");
         const isReplay = (scenarioName === "Replay Attack");
 
-        // Eve visibility: Active in attack scenarios, inactive in legitimate
+        // Eve visibility: Active in attack scenarios, dim greyed in legitimate idle
         if (this.nodes.eve) {
-            this.nodes.eve.group.visible = isAttack;
-            if (this.nodes.eve.aura) {
-                this.nodes.eve.aura.material.color.setHex(0xef4444);
+            this.setEveAttackState(isAttack);
+            if (isAttack && this.nodes.eve.aura) {
                 this.nodes.eve.aura.material.opacity = isIntercept ? 0.85 : 0.45;
             }
         }

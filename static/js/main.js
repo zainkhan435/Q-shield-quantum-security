@@ -84,7 +84,7 @@ async function handleLogout() {
     }
 }
 
-// Mobile Navigation Drawer Toggle
+// Mobile Navigation Drawer Toggle with full a11y & escape listener
 function toggleMobileNav() {
     const drawer = document.getElementById('mobile-nav-drawer');
     const backdrop = document.getElementById('mobile-nav-backdrop');
@@ -94,16 +94,34 @@ function toggleMobileNav() {
     const isOpen = drawer.classList.contains('open');
     if (isOpen) {
         drawer.classList.remove('open');
+        drawer.setAttribute('aria-hidden', 'true');
         if (backdrop) backdrop.classList.remove('open');
-        if (btn) btn.classList.remove('active');
+        if (btn) {
+            btn.classList.remove('active');
+            btn.setAttribute('aria-expanded', 'false');
+        }
         document.body.style.overflow = '';
     } else {
         drawer.classList.add('open');
+        drawer.setAttribute('aria-hidden', 'false');
         if (backdrop) backdrop.classList.add('open');
-        if (btn) btn.classList.add('active');
+        if (btn) {
+            btn.classList.add('active');
+            btn.setAttribute('aria-expanded', 'true');
+        }
         document.body.style.overflow = 'hidden';
     }
 }
+
+// Global keydown listener for Escape key to close mobile nav
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+        const drawer = document.getElementById('mobile-nav-drawer');
+        if (drawer && drawer.classList.contains('open')) {
+            toggleMobileNav();
+        }
+    }
+});
 
 window.toggleMobileNav = toggleMobileNav;
 
