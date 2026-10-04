@@ -7,317 +7,268 @@
 <div class="landing-page-wrapper">
 
     <!-- ============================================================
-         VIEW 1: FULL WEBSITE PRODUCT LANDING & INTRODUCTION
+         VIEW 1: PRODUCT LANDING PAGE (Mobile-First)
     ============================================================ -->
     <div id="view-landing" class="landing-main-view">
-        
-        <!-- Top Landing Navigation Bar -->
-        <nav class="landing-navbar">
-            <div class="landing-nav-container">
-                <div class="landing-brand">
-                    <span class="landing-logo-text">Q-SHIELD</span>
-                    <span class="landing-badge">SIH26141</span>
+
+        <!-- Sticky Navigation Bar -->
+        <nav class="l-navbar">
+            <div class="l-navbar__inner">
+                <div class="l-navbar__brand">
+                    <span class="l-logo">Q-SHIELD</span>
+                    <span class="l-badge">SIH26141</span>
                 </div>
-                <div class="landing-nav-links">
-                    <a href="#foundations" class="landing-nav-link">Quantum Foundations</a>
-                    <a href="#threats" class="landing-nav-link">Threat Vectors</a>
-                    <button class="theme-toggle-btn" id="landing-theme-toggle" onclick="toggleTheme()" aria-label="Toggle Dark/Light Mode" title="Toggle Theme">
+                <div class="l-navbar__actions">
+                    <button class="theme-toggle-btn" id="landing-theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme" title="Toggle Theme">
                         <svg class="sun-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
                         <svg class="moon-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
                     </button>
-                    <button type="button" class="btn-nav-researcher" onclick="showAuthView()">
-                        <span>Researcher Access</span>
-                        <span class="btn-arrow">→</span>
+                    <!-- Desktop nav links -->
+                    <div class="l-navbar__links">
+                        <a href="#foundations" class="l-nav-link">Foundations</a>
+                        <a href="#threats" class="l-nav-link">Threats</a>
+                        <button type="button" class="l-btn-access" onclick="showAuthView()">
+                            Researcher Access <span class="l-btn-arrow">→</span>
+                        </button>
+                    </div>
+                    <!-- Mobile hamburger -->
+                    <button class="l-hamburger" id="landing-hamburger" onclick="toggleLandingMenu()" aria-label="Open menu">
+                        <span></span><span></span><span></span>
                     </button>
                 </div>
+            </div>
+            <!-- Mobile slide-down menu -->
+            <div class="l-mobile-menu" id="landing-mobile-menu">
+                <a href="#foundations" class="l-mobile-link" onclick="closeLandingMenu()">Quantum Foundations</a>
+                <a href="#threats" class="l-mobile-link" onclick="closeLandingMenu()">Threat Vectors</a>
+                <button type="button" class="l-mobile-link l-mobile-link--primary" onclick="closeLandingMenu(); showAuthView()">Researcher Access →</button>
             </div>
         </nav>
 
         <!-- Hero Section -->
-        <header class="landing-hero-section">
-            <div class="landing-hero-container">
-                
-                <div class="kicker-pill mb-3">
-                    <span class="kicker-dot"></span>
-                    <span class="kicker-text">SMART INDIA HACKATHON 2026 · PROBLEM STATEMENT SIH26141</span>
+        <header class="l-hero">
+            <!-- Animated background orbs -->
+            <div class="l-hero__orbs" aria-hidden="true">
+                <div class="l-orb l-orb--1"></div>
+                <div class="l-orb l-orb--2"></div>
+                <div class="l-orb l-orb--3"></div>
+            </div>
+
+            <div class="l-hero__inner">
+                <div class="l-hero__badge">
+                    <span class="l-hero__badge-dot"></span>
+                    <span class="l-hero__badge-text">SIH 2026 · PS SIH26141</span>
                 </div>
 
-                <h1 class="landing-hero-title">
-                    Q-SHIELD
-                </h1>
-                
-                <h2 class="landing-hero-subtitle">
-                    Quantum-Inspired Digital Signature Threat Detection
+                <h1 class="l-hero__title">Q-SHIELD</h1>
+
+                <h2 class="l-hero__subtitle">
+                    Quantum-Inspired <span class="l-accent">Digital Signature</span> Threat Detection
                 </h2>
 
-                <div class="landing-hero-description">
-                    <p>
-                        Q-SHIELD is a quantum-security research and simulation platform designed to help organizations model and detect threats against digital-signature communication protocols.
-                    </p>
-                    <p>
-                        It combines quantum-state simulation, Bell-state entanglement, teleportation, projective measurement, Quantum Bit Error Rate (QBER), and deterministic statistical analysis to evaluate signature integrity under adversarial conditions.
-                    </p>
-                    <p>
-                        The platform simulates and analyzes signature forgery, signer impersonation, replay attacks, eavesdropping, and quantum-channel manipulation.
-                    </p>
+                <p class="l-hero__summary">
+                    A quantum-security simulation platform that detects signature forgery, impersonation, replay and eavesdropping attacks.
+                </p>
+
+                <!-- Stat Chips -->
+                <div class="l-hero__chips">
+                    <div class="l-chip">
+                        <span class="l-chip__value">QBER ≤ 11%</span>
+                        <span class="l-chip__label">Security threshold</span>
+                    </div>
+                    <div class="l-chip">
+                        <span class="l-chip__value">Z ≥ 3σ</span>
+                        <span class="l-chip__label">Confidence bound</span>
+                    </div>
+                    <div class="l-chip">
+                        <span class="l-chip__value">Qiskit Aer</span>
+                        <span class="l-chip__label">Quantum backend</span>
+                    </div>
                 </div>
 
-                <!-- Action Buttons -->
-                <div class="landing-hero-actions">
-                    <button type="button" class="btn btn-primary btn-lg" onclick="showAuthView()">
-                        <span>GET STARTED →</span>
+                <!-- CTA Buttons -->
+                <div class="l-hero__actions">
+                    <button type="button" class="l-btn l-btn--primary" onclick="showAuthView()">
+                        Get Started →
                     </button>
-                    <a href="#foundations" class="btn btn-outline btn-lg">
-                        <span>Explore How It Works ↓</span>
+                    <a href="#foundations" class="l-btn l-btn--outline">
+                        Explore How It Works ↓
                     </a>
                 </div>
-
-                <!-- Refined Technical Specification Strip (3 Core Metrics) -->
-                <div class="landing-specs-strip reveal-on-scroll">
-                    <div class="spec-cell">
-                        <span class="spec-label">QBER CUTOFF LIMIT</span>
-                        <span class="spec-value text-primary">≤ 11.0%</span>
-                        <span class="spec-sub">Theoretical Security Threshold</span>
-                    </div>
-                    <div class="spec-cell">
-                        <span class="spec-label">CONFIDENCE THRESHOLD</span>
-                        <span class="spec-value text-secure">Z ≥ 3.0σ</span>
-                        <span class="spec-sub">p &lt; 0.0027 Anomaly Bound</span>
-                    </div>
-                    <div class="spec-cell">
-                        <span class="spec-label">QUANTUM BACKEND</span>
-                        <span class="spec-value font-mono">Qiskit Aer</span>
-                        <span class="spec-sub">Full Statevector Matrix Simulation</span>
-                    </div>
-                </div>
-
             </div>
         </header>
 
-        <!-- Core Quantum Pillars / How It Works -->
-        <section id="foundations" class="landing-content-section">
-            <div class="landing-content-container">
-                
-                <div class="section-header-center reveal-on-scroll">
-                    <div class="kicker-pill mb-2">
-                        <span class="kicker-dot"></span>
-                        <span class="kicker-text">SCIENTIFIC FOUNDATIONS</span>
+        <!-- Foundations Section -->
+        <section id="foundations" class="l-section">
+            <div class="l-section__inner">
+                <div class="l-section__header reveal-on-scroll">
+                    <div class="l-hero__badge">
+                        <span class="l-hero__badge-dot"></span>
+                        <span class="l-hero__badge-text">SCIENTIFIC FOUNDATIONS</span>
                     </div>
-                    <h2 class="section-title-lg">How Q-SHIELD Detects Protocol Threats</h2>
-                    <p class="section-subtitle-lg">
+                    <h2 class="l-section__title">How Q-SHIELD Detects Protocol Threats</h2>
+                    <p class="l-section__desc">
                         The platform replaces computational hardness assumptions with information-theoretic quantum physics and rigorous statistical mechanics.
                     </p>
                 </div>
 
-                <div class="landing-pillars-grid">
-                    
-                    <div class="pillar-card reveal-on-scroll">
-                        <div class="pillar-num font-mono">01</div>
-                        <h3 class="pillar-title">Quantum-State Simulation</h3>
-                        <p class="pillar-desc">
-                            Synthesizes single-qubit signature states |ψ⟩ = cos(θ/2)|0⟩ + e^(iφ)sin(θ/2)|1⟩ on the interactive 3D Bloch sphere, tracking exact pure and mixed density matrices.
-                        </p>
+                <div class="l-card-grid l-card-grid--3col">
+                    <div class="l-card reveal-on-scroll">
+                        <div class="l-card__num">01</div>
+                        <h3 class="l-card__title">Quantum-State Simulation</h3>
+                        <p class="l-card__desc">Synthesizes single-qubit signature states |ψ⟩ on the interactive 3D Bloch sphere, tracking exact pure and mixed density matrices.</p>
                     </div>
-
-                    <div class="pillar-card reveal-on-scroll">
-                        <div class="pillar-num font-mono">02</div>
-                        <h3 class="pillar-title">Bell-State Entanglement</h3>
-                        <p class="pillar-desc">
-                            Distributes maximally entangled Einstein-Podolsky-Rosen (EPR) pairs |Φ⁺⟩ = (|00⟩ + |11⟩)/√2 across communication channels, forming a statistically correlated quantum bridge.
-                        </p>
+                    <div class="l-card reveal-on-scroll">
+                        <div class="l-card__num">02</div>
+                        <h3 class="l-card__title">Bell-State Entanglement</h3>
+                        <p class="l-card__desc">Distributes maximally entangled EPR pairs |Φ⁺⟩ across channels, forming a statistically correlated quantum bridge.</p>
                     </div>
-
-                    <div class="pillar-card reveal-on-scroll">
-                        <div class="pillar-num font-mono">03</div>
-                        <h3 class="pillar-title">Quantum Teleportation</h3>
-                        <p class="pillar-desc">
-                            Executes Bennett's 3-qubit teleportation protocol to transmit signature states without physical qubit traversal, pairing joint Bell measurement with classical bit feed (c₀, c₁).
-                        </p>
+                    <div class="l-card reveal-on-scroll">
+                        <div class="l-card__num">03</div>
+                        <h3 class="l-card__title">Quantum Teleportation</h3>
+                        <p class="l-card__desc">Executes Bennett's 3-qubit teleportation protocol to transmit signature states without physical qubit traversal.</p>
                     </div>
-
-                    <div class="pillar-card reveal-on-scroll">
-                        <div class="pillar-num font-mono">04</div>
-                        <h3 class="pillar-title">Projective Measurements</h3>
-                        <p class="pillar-desc">
-                            Verifies signature parity in mutually unbiased Pauli bases (Z, X, Y). Quantum wavefunction collapse guarantees that unauthorized inspection introduces detectable errors.
-                        </p>
+                    <div class="l-card reveal-on-scroll">
+                        <div class="l-card__num">04</div>
+                        <h3 class="l-card__title">Projective Measurements</h3>
+                        <p class="l-card__desc">Verifies signature parity in mutually unbiased Pauli bases (Z, X, Y). Wavefunction collapse introduces detectable errors on inspection.</p>
                     </div>
-
-                    <div class="pillar-card reveal-on-scroll">
-                        <div class="pillar-num font-mono">05</div>
-                        <h3 class="pillar-title">Quantum Bit Error Rate (QBER)</h3>
-                        <p class="pillar-desc">
-                            Empirically measures the proportion of orthogonal measurement outcomes against the theoretical 11.0% cutoff, precisely separating natural noise from active eavesdropping.
-                        </p>
+                    <div class="l-card reveal-on-scroll">
+                        <div class="l-card__num">05</div>
+                        <h3 class="l-card__title">Quantum Bit Error Rate</h3>
+                        <p class="l-card__desc">Empirically measures orthogonal measurement outcomes against the theoretical 11.0% cutoff, separating noise from eavesdropping.</p>
                     </div>
-
-                    <div class="pillar-card reveal-on-scroll">
-                        <div class="pillar-num font-mono">06</div>
-                        <h3 class="pillar-title">Statistical Hypothesis Testing</h3>
-                        <p class="pillar-desc">
-                            Applies binomial standard deviation Z-scores to measurement distributions (Z ≥ 3.0σ), ensuring deterministic threat alerts with 99.73% statistical confidence without black-box ML.
-                        </p>
+                    <div class="l-card reveal-on-scroll">
+                        <div class="l-card__num">06</div>
+                        <h3 class="l-card__title">Statistical Hypothesis Testing</h3>
+                        <p class="l-card__desc">Applies binomial Z-scores to measurement distributions (Z ≥ 3.0σ), ensuring 99.73% confidence deterministic threat alerts.</p>
                     </div>
-
                 </div>
-
             </div>
         </section>
 
         <!-- Threat Vectors Section -->
-        <section id="threats" class="landing-content-section bg-subtle">
-            <div class="landing-content-container">
-                
-                <div class="section-header-center reveal-on-scroll">
-                    <div class="kicker-pill mb-2">
-                        <span class="kicker-dot"></span>
-                        <span class="kicker-text">CYBERSECURITY ATTACK SURFACE</span>
+        <section id="threats" class="l-section l-section--alt">
+            <div class="l-section__inner">
+                <div class="l-section__header reveal-on-scroll">
+                    <div class="l-hero__badge">
+                        <span class="l-hero__badge-dot"></span>
+                        <span class="l-hero__badge-text">CYBERSECURITY ATTACK SURFACE</span>
                     </div>
-                    <h2 class="section-title-lg">Detectable Cyber Threat Vectors</h2>
-                    <p class="section-subtitle-lg">
+                    <h2 class="l-section__title">Detectable Cyber Threat Vectors</h2>
+                    <p class="l-section__desc">
                         Five critical attack scenarios simulated, analyzed, and audited against deterministic verification criteria.
                     </p>
                 </div>
 
-                <div class="landing-threats-grid">
-                    
-                    <div class="threat-summary-card reveal-on-scroll">
-                        <div class="threat-card-top">
-                            <span class="threat-pill threat-danger">THREAT VECTOR 01</span>
-                            <span class="font-mono text-xs">Parity Collapse</span>
+                <div class="l-card-grid l-card-grid--threats">
+                    <div class="l-threat-card reveal-on-scroll">
+                        <div class="l-threat-card__top">
+                            <span class="l-threat-pill l-threat-pill--danger">VECTOR 01</span>
+                            <span class="l-threat-tag">Parity Collapse</span>
                         </div>
-                        <h3 class="threat-card-title">Signature Forgery</h3>
-                        <p class="threat-card-desc">
-                            Adversaries attempting to forge Alice's signature alter the quantum payload state (|ψ'⟩ ≠ |ψ⟩). Bob's projective verification collapses to orthogonal parity, yielding ~100% QBER and immediate signature rejection.
-                        </p>
+                        <h3 class="l-threat-card__title">Signature Forgery</h3>
+                        <p class="l-threat-card__desc">Adversaries alter the quantum payload state (|ψ'⟩ ≠ |ψ⟩). Projective verification yields ~100% QBER and immediate rejection.</p>
                     </div>
-
-                    <div class="threat-summary-card reveal-on-scroll">
-                        <div class="threat-card-top">
-                            <span class="threat-pill threat-danger">THREAT VECTOR 02</span>
-                            <span class="font-mono text-xs">Entanglement Mismatch</span>
+                    <div class="l-threat-card reveal-on-scroll">
+                        <div class="l-threat-card__top">
+                            <span class="l-threat-pill l-threat-pill--danger">VECTOR 02</span>
+                            <span class="l-threat-tag">Entanglement Mismatch</span>
                         </div>
-                        <h3 class="threat-card-title">Signer Impersonation</h3>
-                        <p class="threat-card-desc">
-                            Untrusted adversaries attempting authentication without valid pre-shared entanglement material produce uncorrelated random distributions. Multiparty verification between Bob and Charlie flags the identity.
-                        </p>
+                        <h3 class="l-threat-card__title">Signer Impersonation</h3>
+                        <p class="l-threat-card__desc">Adversaries without valid pre-shared entanglement produce uncorrelated random distributions, flagged by multiparty verification.</p>
                     </div>
-
-                    <div class="threat-summary-card reveal-on-scroll">
-                        <div class="threat-card-top">
-                            <span class="threat-pill threat-warning">THREAT VECTOR 03</span>
-                            <span class="font-mono text-xs">Nonce Collision</span>
+                    <div class="l-threat-card reveal-on-scroll">
+                        <div class="l-threat-card__top">
+                            <span class="l-threat-pill l-threat-pill--warning">VECTOR 03</span>
+                            <span class="l-threat-tag">Nonce Collision</span>
                         </div>
-                        <h3 class="threat-card-title">Replay Attacks</h3>
-                        <p class="threat-card-desc">
-                            Adversaries capturing and re-transmitting legitimate classical bits (c₀, c₁) are detected by Q-SHIELD's cryptographic single-use UUIDv4 nonce ledger in SQLite, halting replay attempts, statistically detected at 3 sigma confidence.
-                        </p>
+                        <h3 class="l-threat-card__title">Replay Attacks</h3>
+                        <p class="l-threat-card__desc">Re-transmitted classical bits detected by cryptographic single-use UUIDv4 nonce ledger, statistically confirmed at 3σ confidence.</p>
                     </div>
-
-                    <div class="threat-summary-card reveal-on-scroll">
-                        <div class="threat-card-top">
-                            <span class="threat-pill threat-danger">THREAT VECTOR 04</span>
-                            <span class="font-mono text-xs">Wavefunction Collapse</span>
+                    <div class="l-threat-card reveal-on-scroll">
+                        <div class="l-threat-card__top">
+                            <span class="l-threat-pill l-threat-pill--danger">VECTOR 04</span>
+                            <span class="l-threat-tag">Wavefunction Collapse</span>
                         </div>
-                        <h3 class="threat-card-title">Intercept & Resend (Eve)</h3>
-                        <p class="threat-card-desc">
-                            Adversary Eve taps the quantum channel to measure in-flight qubits. Measurement collapses the entangled Bell pair, inducing ~25% to 50% QBER, drastically exceeding the 11.0% cutoff and triggering an alert.
-                        </p>
+                        <h3 class="l-threat-card__title">Intercept &amp; Resend (Eve)</h3>
+                        <p class="l-threat-card__desc">Eve taps the quantum channel, collapsing the Bell pair and inducing 25-50% QBER, exceeding the 11.0% cutoff.</p>
                     </div>
-
-                    <div class="threat-summary-card reveal-on-scroll">
-                        <div class="threat-card-top">
-                            <span class="threat-pill threat-warning">THREAT VECTOR 05</span>
-                            <span class="font-mono text-xs">Depolarizing Noise</span>
+                    <div class="l-threat-card reveal-on-scroll">
+                        <div class="l-threat-card__top">
+                            <span class="l-threat-pill l-threat-pill--warning">VECTOR 05</span>
+                            <span class="l-threat-tag">Depolarizing Noise</span>
                         </div>
-                        <h3 class="threat-card-title">Channel Manipulation</h3>
-                        <p class="threat-card-desc">
-                            Environmental decoherence, thermal turbulence, or physical fiber tampering forcing depolarizing errors beyond safe margins (≥15%) are classified as anomalies through statistical Z-score elevation (Z ≥ 3.0σ).
-                        </p>
+                        <h3 class="l-threat-card__title">Channel Manipulation</h3>
+                        <p class="l-threat-card__desc">Environmental decoherence or fiber tampering forcing errors beyond safe margins classified via Z-score elevation (Z ≥ 3.0σ).</p>
                     </div>
-
-                </div>
-
-            </div>
-        </section>
-
-        <!-- Final Landing Call-to-Action Banner -->
-        <section class="landing-cta-banner reveal-on-scroll">
-            <div class="landing-cta-container">
-                <h2 class="cta-title">Ready to Audit Quantum Digital Signature Security?</h2>
-                <p class="cta-desc">
-                    Access the live 3D quantum network centerpiece, test all 6 protocol modules in the Quantum Lab, and execute deterministic attack audits.
-                </p>
-                <div class="cta-actions">
-                    <button type="button" class="btn btn-primary btn-lg" onclick="showAuthView()">
-                        <span>ENTER RESEARCHER CONSOLE →</span>
-                    </button>
                 </div>
             </div>
         </section>
 
-        <!-- Professional Footer -->
-        <footer class="landing-footer">
-            <div class="landing-footer-container">
-                <div class="footer-left">
-                    <span class="font-bold">Q-SHIELD</span>
-                    <span class="footer-sep">•</span>
-                    <span>Smart India Hackathon 2026</span>
-                    <span class="footer-sep">•</span>
-                    <span>Problem Statement SIH26141</span>
-                </div>
-                <div class="footer-right">
-                    <span>Egreen Quanta LLP · Quantum Cybersecurity Research</span>
-                </div>
+        <!-- CTA Banner -->
+        <section class="l-cta reveal-on-scroll">
+            <div class="l-cta__inner">
+                <h2 class="l-cta__title">Ready to Audit Quantum Signature Security?</h2>
+                <p class="l-cta__desc">Access the 3D quantum network, test all 6 protocol modules, and execute deterministic attack audits.</p>
+                <button type="button" class="l-btn l-btn--primary l-btn--lg" onclick="showAuthView()">
+                    Enter Researcher Console →
+                </button>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="l-footer">
+            <div class="l-footer__inner">
+                <span><strong>Q-SHIELD</strong> · Smart India Hackathon 2026 · SIH26141</span>
+                <span>Egreen Quanta LLP · Quantum Cybersecurity Research</span>
             </div>
         </footer>
 
     </div>
 
     <!-- ============================================================
-         VIEW 2: RESEARCHER AUTHENTICATION (CENTERED CLASSICAL LOGIN)
+         VIEW 2: RESEARCHER AUTHENTICATION (Centered Card)
     ============================================================ -->
-    <div id="view-auth" class="landing-auth-view" style="display: none;">
-        
-        <!-- Floating particles background (CSS-only) -->
-        <div class="auth-bg-particles" aria-hidden="true">
-            <div class="auth-particle auth-particle-1"></div>
-            <div class="auth-particle auth-particle-2"></div>
-            <div class="auth-particle auth-particle-3"></div>
+    <div id="view-auth" class="auth-view" style="display: none;">
+
+        <!-- Page-level theme toggle (top-right corner) -->
+        <button class="auth-page-theme-toggle theme-toggle-btn" id="auth-theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme" title="Toggle Theme">
+            <svg class="sun-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+            <svg class="moon-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+        </button>
+
+        <!-- Subtle background glow -->
+        <div class="auth-bg" aria-hidden="true">
+            <div class="auth-bg__glow auth-bg__glow--1"></div>
+            <div class="auth-bg__glow auth-bg__glow--2"></div>
         </div>
 
-        <!-- Single centered login card -->
-        <div class="auth-centered-card">
-            
-            <!-- Top bar -->
-            <div class="auth-card-topbar">
-                <button type="button" class="btn-back-landing" onclick="showLandingView()">
-                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg>
-                    Back
-                </button>
-                <div class="auth-topbar-right">
-                    <button class="theme-toggle-btn" id="auth-theme-toggle" onclick="toggleTheme()" aria-label="Toggle Dark/Light Mode" title="Toggle Theme">
-                        <svg class="sun-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
-                        <svg class="moon-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
-                    </button>
-                </div>
+        <!-- Centered login card -->
+        <div class="auth-card">
+            <!-- Back link -->
+            <a href="#" class="auth-card__back" onclick="event.preventDefault(); showLandingView()">
+                ← Back to Platform Overview
+            </a>
+
+            <!-- Brand row -->
+            <div class="auth-card__brand">
+                <span class="l-logo">Q-SHIELD</span>
+                <span class="l-badge">SIH26141</span>
             </div>
 
-            <!-- Brand header -->
-            <div class="auth-card-brand">
-                <div class="auth-shield-icon">
-                    <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.5">
-                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-                        <circle cx="12" cy="11" r="3"></circle>
-                    </svg>
-                </div>
-                <h2 class="auth-card-title">Q-SHIELD</h2>
-                <p class="auth-card-subtitle">Researcher Authentication Portal</p>
-                <div class="auth-status-pill">
-                    <span class="auth-status-dot"></span>
-                    <span class="auth-status-text">SECURE · QUANTUM-ENCRYPTED</span>
-                </div>
+            <!-- Shield icon -->
+            <div class="auth-card__icon">
+                <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                    <circle cx="12" cy="11" r="3"></circle>
+                </svg>
             </div>
+
+            <!-- Caption & Title -->
+            <div class="auth-card__caption">STAGE 02 / AUTHENTICATION</div>
+            <h2 class="auth-card__title">Researcher Sign In</h2>
+            <p class="auth-card__subtitle">Sign in to access Q-SHIELD quantum security operations</p>
 
             <!-- Error alerts -->
             <div id="login-alert" class="alert alert-error" style="display: none;"></div>
@@ -326,68 +277,65 @@
             {% endif %}
 
             <!-- Login form -->
-            <form id="login-form" class="auth-login-form" onsubmit="handleLoginSubmit(event)">
-                <div class="form-group">
-                    <label for="email" class="form-label">Researcher Email</label>
-                    <input 
-                        type="email" 
-                        id="email" 
-                        name="email" 
-                        class="form-control" 
-                        placeholder="admin@qshield.security" 
-                        required 
+            <form id="login-form" class="auth-form" onsubmit="handleLoginSubmit(event)">
+                <div class="auth-field">
+                    <label for="email" class="auth-field__label">Researcher Email</label>
+                    <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        class="auth-field__input"
+                        placeholder="admin@qshield.security"
+                        required
                         autocomplete="email"
                     >
                 </div>
 
-                <div class="form-group">
-                    <label for="password" class="form-label">Security Key / Password</label>
-                    <input 
-                        type="password" 
-                        id="password" 
-                        name="password" 
-                        class="form-control" 
-                        placeholder="••••••••••••" 
-                        required 
-                        autocomplete="current-password"
-                    >
+                <div class="auth-field">
+                    <label for="password" class="auth-field__label">Security Key / Password</label>
+                    <div class="auth-field__password-wrap">
+                        <input
+                            type="password"
+                            id="password"
+                            name="password"
+                            class="auth-field__input"
+                            placeholder="••••••••••••"
+                            required
+                            autocomplete="current-password"
+                        >
+                        <button type="button" class="auth-field__eye" onclick="togglePasswordVisibility()" aria-label="Show password">
+                            <svg id="eye-icon-show" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                            <svg id="eye-icon-hide" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" style="display:none;"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
+                        </button>
+                    </div>
                 </div>
 
-                <button type="submit" id="login-btn" class="btn btn-primary btn-block btn-lg auth-submit-btn">
-                    <span class="btn-text">SIGN IN →</span>
+                <button type="submit" id="login-btn" class="l-btn l-btn--primary l-btn--block auth-submit">
+                    <span class="btn-text">Sign in to Quantum Lab →</span>
                     <span class="btn-spinner" style="display: none;"></span>
                 </button>
             </form>
 
-            <!-- Judge access -->
-            <div class="judge-access-container">
-                <button type="button" class="judge-toggle-btn" onclick="toggleJudgeAccess()">
-                    <svg viewBox="0 0 24 24" width="13" height="13" stroke="currentColor" stroke-width="2" fill="none"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+            <!-- Merged Judge / Evaluator Access -->
+            <div class="auth-judge">
+                <button type="button" class="auth-judge__toggle" onclick="toggleJudgeAccess()">
+                    <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
                     <span>Judge / Evaluator Access</span>
-                    <svg class="judge-chevron" viewBox="0 0 24 24" width="11" height="11" stroke="currentColor" stroke-width="2" fill="none"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                    <svg class="auth-judge__chevron" viewBox="0 0 24 24" width="12" height="12" stroke="currentColor" stroke-width="2" fill="none"><polyline points="6 9 12 15 18 9"></polyline></svg>
                 </button>
-                <div id="demo-credentials-card" class="demo-credentials-card judge-hidden">
-                    <div class="demo-cred-header">
-                        <svg viewBox="0 0 24 24" width="13" height="13" stroke="currentColor" stroke-width="2" fill="none">
-                            <circle cx="12" cy="12" r="10"></circle>
-                            <line x1="12" y1="16" x2="12" y2="12"></line>
-                            <line x1="12" y1="8" x2="12.01" y2="8"></line>
-                        </svg>
-                        <span>HACKATHON DEMO ACCESS</span>
-                    </div>
-                    <div class="demo-cred-details">
+                <div id="demo-credentials-card" class="auth-judge__panel judge-hidden">
+                    <div class="auth-judge__creds">
                         <div>Email: <code>admin@qshield.security</code></div>
                         <div>Password: <code>QShield@2026</code></div>
                     </div>
-                    <button type="button" class="btn-link-demo" onclick="fillDemoCredentials()">Autofill Demo Credentials</button>
+                    <button type="button" class="auth-judge__autofill" onclick="fillDemoCredentials()">Autofill Demo Credentials</button>
                 </div>
             </div>
 
             <!-- Footer -->
-            <div class="auth-card-bottom">
-                <span>SIH 2026 · Egreen Quanta LLP · Quantum Cybersecurity</span>
+            <div class="auth-card__footer">
+                Egreen Quanta LLP · Quantum Cybersecurity Research
             </div>
-
         </div>
     </div>
 
@@ -396,6 +344,7 @@
 
 {% block scripts %}
 <script>
+/* ── View Transitions ── */
 function showAuthView() {
     const vLanding = document.getElementById('view-landing');
     const vAuth = document.getElementById('view-auth');
@@ -406,13 +355,9 @@ function showAuthView() {
             vLanding.style.display = 'none';
             vAuth.style.display = 'flex';
             vAuth.style.opacity = '0';
-            vAuth.style.transform = 'translateY(15px)';
-            vAuth.style.transition = 'all 0.25s ease';
+            vAuth.style.transition = 'opacity 0.3s ease';
             window.scrollTo({ top: 0, behavior: 'instant' });
-            requestAnimationFrame(() => {
-                vAuth.style.opacity = '1';
-                vAuth.style.transform = 'translateY(0)';
-            });
+            requestAnimationFrame(() => { vAuth.style.opacity = '1'; });
         }, 200);
     }
 }
@@ -428,13 +373,31 @@ function showLandingView() {
             vLanding.style.display = 'block';
             vLanding.style.opacity = '0';
             vLanding.style.transition = 'opacity 0.25s ease';
-            requestAnimationFrame(() => {
-                vLanding.style.opacity = '1';
-            });
+            requestAnimationFrame(() => { vLanding.style.opacity = '1'; });
         }, 200);
     }
 }
 
+/* ── Mobile Menu ── */
+function toggleLandingMenu() {
+    const menu = document.getElementById('landing-mobile-menu');
+    const btn = document.getElementById('landing-hamburger');
+    if (menu) {
+        menu.classList.toggle('is-open');
+        btn && btn.classList.toggle('is-open');
+    }
+}
+
+function closeLandingMenu() {
+    const menu = document.getElementById('landing-mobile-menu');
+    const btn = document.getElementById('landing-hamburger');
+    if (menu) {
+        menu.classList.remove('is-open');
+        btn && btn.classList.remove('is-open');
+    }
+}
+
+/* ── Credentials ── */
 function fillDemoCredentials() {
     document.getElementById('email').value = 'admin@qshield.security';
     document.getElementById('password').value = 'QShield@2026';
@@ -443,35 +406,50 @@ function fillDemoCredentials() {
 
 function toggleJudgeAccess() {
     const card = document.getElementById('demo-credentials-card');
-    if (card) {
-        card.classList.toggle('judge-hidden');
+    if (card) card.classList.toggle('judge-hidden');
+}
+
+/* ── Password Toggle ── */
+function togglePasswordVisibility() {
+    const pw = document.getElementById('password');
+    const show = document.getElementById('eye-icon-show');
+    const hide = document.getElementById('eye-icon-hide');
+    if (pw.type === 'password') {
+        pw.type = 'text';
+        show.style.display = 'none';
+        hide.style.display = 'block';
+    } else {
+        pw.type = 'password';
+        show.style.display = 'block';
+        hide.style.display = 'none';
     }
 }
 
+/* ── Login Submit ── */
 async function handleLoginSubmit(e) {
     e.preventDefault();
     const alertBox = document.getElementById('login-alert');
     const submitBtn = document.getElementById('login-btn');
     const btnText = submitBtn.querySelector('.btn-text');
     const btnSpinner = submitBtn.querySelector('.btn-spinner');
-    
+
     alertBox.style.display = 'none';
     btnText.style.display = 'none';
     btnSpinner.style.display = 'inline-block';
     submitBtn.disabled = true;
-    
+
     const email = document.getElementById('email').value.trim();
     const password = document.getElementById('password').value;
-    
+
     try {
         const response = await fetch('/api/login', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email, password })
         });
-        
+
         const data = await response.json();
-        
+
         if (response.ok && data.success) {
             showToast('Access granted. Entering security operations...', 'success');
             setTimeout(() => {
@@ -493,7 +471,7 @@ async function handleLoginSubmit(e) {
     }
 }
 
-// Scroll-reveal intersection observer for public landing page
+/* ── Scroll Reveal ── */
 document.addEventListener('DOMContentLoaded', () => {
     const reveals = document.querySelectorAll('.reveal-on-scroll');
     if ('IntersectionObserver' in window) {
@@ -505,7 +483,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
         }, { threshold: 0.12 });
-
         reveals.forEach(el => observer.observe(el));
     } else {
         reveals.forEach(el => el.classList.add('is-revealed'));
