@@ -33,10 +33,13 @@ class QuantumNetwork3D {
         this.isDragging = false;
         this.isPanning = false;
         this.prevMouse = { x: 0, y: 0 };
-        this.defaultCamera = { theta: 0.15, phi: 0.22, radius: 15.5 };
+        const isMobileScreen = (typeof window !== 'undefined') && (window.innerWidth < 640);
+        this.defaultCamera = { theta: 0.15, phi: 0.22, radius: isMobileScreen ? 18.8 : 15.5 };
         this.cameraAngle = { ...this.defaultCamera };
         this.cameraTarget = (typeof THREE !== 'undefined' && typeof THREE.Vector3 === 'function') ? new THREE.Vector3(0, 0.2, 0) : null;
         this.autoRotate = this.options.autoRotate;
+        this.touchEnabled = !isMobileScreen;
+        this.isFullscreen = false;
 
         // Protocol state
         this.state = {
@@ -107,28 +110,10 @@ class QuantumNetwork3D {
         this.renderer.domElement.style.width = '100%';
         this.renderer.domElement.style.height = '100%';
         this.renderer.domElement.style.display = 'block';
+        const isTouchScreen = (typeof window !== 'undefined') && (('ontouchstart' in window) || (navigator.maxTouchPoints > 0)) && (window.innerWidth < 768);
+        this.renderer.domElement.style.touchAction = isTouchScreen ? 'pan-y' : 'none';
         this.container.innerHTML = '';
         this.container.appendChild(this.renderer.domElement);
-
-        // Mobile touch interaction overlay (only on small touch screens so mobile users can scroll past)
-        const isTouchScreen = (typeof window !== 'undefined') && (('ontouchstart' in window) || (navigator.maxTouchPoints > 0)) && (window.innerWidth < 768);
-        if (isTouchScreen) {
-            const overlay = document.createElement('div');
-            overlay.className = 'touch-interact-overlay';
-            overlay.innerHTML = '<span>Tap to interact with 3D Globe</span>';
-            const removeOverlay = (e) => {
-                if (e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                }
-                overlay.classList.add('interacted');
-                overlay.style.display = 'none';
-                overlay.remove();
-            };
-            overlay.addEventListener('click', removeOverlay);
-            overlay.addEventListener('touchstart', removeOverlay, { passive: false });
-            this.container.appendChild(overlay);
-        }
 
         // Lighting
         const ambientLight = new THREE.AmbientLight(0xffffff, 0.65);
@@ -452,42 +437,42 @@ class QuantumNetwork3D {
         const leaderLine = new THREE.Line(leaderGeo, leaderMat);
         group.add(leaderLine);
 
-        // Billboard badge on top of leader line
+        // Billboard badge on top of leader line (crisp readable label with dark backdrop)
         const canvas = document.createElement('canvas');
-        canvas.width = 320;
-        canvas.height = 120;
+        canvas.width = 340;
+        canvas.height = 130;
         const ctx = canvas.getContext('2d');
 
         // Background pill
-        ctx.fillStyle = 'rgba(8, 12, 20, 0.88)';
-        ctx.strokeStyle = isEve ? '#ef4444' : '#334155';
+        ctx.fillStyle = 'rgba(8, 12, 20, 0.92)';
+        ctx.strokeStyle = isEve ? '#ef4444' : 'rgba(56, 189, 248, 0.4)';
         ctx.lineWidth = 3;
-        this.roundRect(ctx, 4, 4, 312, 112, 12, true, true);
+        this.roundRect(ctx, 4, 4, 332, 122, 14, true, true);
 
         // Accent indicator
         ctx.fillStyle = isEve ? '#ef4444' : (color === 0x0f62fe ? '#0f62fe' : (color === 0x10b981 ? '#10b981' : '#06b6d4'));
         ctx.beginPath();
-        ctx.arc(32, 40, 8, 0, Math.PI * 2);
+        ctx.arc(36, 44, 9, 0, Math.PI * 2);
         ctx.fill();
 
-        // Title
+        // Title (Node Name)
         ctx.fillStyle = '#ffffff';
-        ctx.font = 'bold 28px Inter, sans-serif';
+        ctx.font = 'bold 30px Inter, sans-serif';
         ctx.textAlign = 'left';
-        ctx.fillText(name.toUpperCase(), 52, 48);
+        ctx.fillText(name.toUpperCase(), 58, 52);
 
-        // Role with subtle identity glyph
-        ctx.fillStyle = isEve ? '#f87171' : (color === 0x0f62fe ? '#60a5fa' : (color === 0x10b981 ? '#34d399' : '#38bdf8'));
-        ctx.font = '600 20px "JetBrains Mono", monospace';
-        ctx.fillText(roleGlyph || role, 32, 86);
+        // Role with subtle identity glyph (at least 11-12px equivalent on screen)
+        ctx.fillStyle = isEve ? '#fca5a5' : (color === 0x0f62fe ? '#93c5fd' : (color === 0x10b981 ? '#6ee7b7' : '#67e8f9'));
+        ctx.font = '600 22px "JetBrains Mono", monospace';
+        ctx.fillText(roleGlyph || role, 36, 94);
 
         const texture = new THREE.CanvasTexture(canvas);
         texture.minFilter = THREE.LinearFilter;
-        const spriteMat = new THREE.SpriteMaterial({ map: texture, transparent: true });
+        const spriteMat = new THREE.SpriteMaterial({ map: texture, transparent: true, depthTest: false });
         const sprite = new THREE.Sprite(spriteMat);
         sprite.position.copy(leaderOffset);
         sprite.position.y += 0.35;
-        sprite.scale.set(2.5, 1.0, 1);
+        sprite.scale.set(2.6, 1.0, 1);
         group.add(sprite);
 
         this.globeGroup.add(group);
@@ -820,16 +805,20 @@ class QuantumNetwork3D {
             this.updateCameraPosition();
         }, { passive: false });
 
-        // Mobile touch swipe to orbit
+        // Mobile touch swipe to orbit (only when touch interaction enabled or in fullscreen)
         dom.addEventListener('touchstart', (e) => {
+            if (!this.touchEnabled && !this.isFullscreen) return;
             if (e.touches.length === 1) {
                 this.prevMouse = { x: e.touches[0].clientX, y: e.touches[0].clientY };
                 this.isDragging = true;
                 this.autoRotate = false;
+                const btn = document.getElementById('btn-auto-rotate');
+                if (btn) btn.classList.remove('active');
             }
         }, { passive: true });
 
         dom.addEventListener('touchmove', (e) => {
+            if (!this.touchEnabled && !this.isFullscreen) return;
             if (!this.isDragging || e.touches.length !== 1) return;
             const dx = e.touches[0].clientX - this.prevMouse.x;
             const dy = e.touches[0].clientY - this.prevMouse.y;
@@ -844,6 +833,13 @@ class QuantumNetwork3D {
         }, { passive: true });
     }
 
+    enableTouch() {
+        this.touchEnabled = true;
+        if (this.renderer && this.renderer.domElement) {
+            this.renderer.domElement.style.touchAction = 'none';
+        }
+    }
+
     updateCameraPosition() {
         const { theta, phi, radius } = this.cameraAngle;
         this.camera.position.x = this.cameraTarget.x + radius * Math.sin(theta) * Math.cos(phi);
@@ -853,10 +849,25 @@ class QuantumNetwork3D {
     }
 
     resetView() {
-        this.cameraAngle = { ...this.defaultCamera };
-        this.cameraTarget.set(0, 0.2, 0);
+        const isMobileScreen = (typeof window !== 'undefined') && (window.innerWidth < 640);
+        this.cameraAngle = {
+            theta: 0.15,
+            phi: 0.22,
+            radius: isMobileScreen ? 18.8 : 15.5
+        };
+        this.cameraTarget.set(0, 0.15, 0);
         this.updateCameraPosition();
         this.autoRotate = true;
+        const btn = document.getElementById('btn-auto-rotate');
+        if (btn) {
+            btn.classList.add('active');
+            const pauseIcon = btn.querySelector('.icon-pause');
+            const playIcon = btn.querySelector('.icon-play');
+            if (pauseIcon && playIcon) {
+                pauseIcon.style.display = 'block';
+                playIcon.style.display = 'none';
+            }
+        }
     }
 
     toggleAutoRotate() {
@@ -871,8 +882,12 @@ class QuantumNetwork3D {
         if (width === 0 || height === 0) return;
 
         this.camera.aspect = width / height;
+        if (width < 640 && !this.isFullscreen) {
+            this.cameraAngle.radius = Math.max(18.5, 15.5 * (1.35 / Math.max(0.75, width / height)));
+        }
         this.camera.updateProjectionMatrix();
         this.renderer.setSize(width, height);
+        this.updateCameraPosition();
     }
 
     /* ============================================================

@@ -98,6 +98,12 @@ async function handleRunExperiment(e) {
         if (labOverlay) labOverlay.textContent = msg;
         if (statusText) statusText.textContent = `STAGE 0${stageNum} / 09`;
         if (window.labNetwork3D) window.labNetwork3D.setStage(stageNum);
+
+        // Update status dot to amber (running)
+        const dot = document.getElementById('threat-status-dot');
+        if (dot) {
+            dot.className = 'threat-status-dot status-dot-amber';
+        }
     };
 
     const delay = (ms) => new Promise(r => setTimeout(r, ms));
@@ -186,6 +192,10 @@ async function handleRunExperiment(e) {
             : `09 AUDIT VERDICT: ${exp.threat_status} — QBER ${exp.qber_percentage} (${exp.reason})`;
         
         if (labOverlay) labOverlay.textContent = verdictMsg;
+        const dot = document.getElementById('threat-status-dot');
+        if (dot) {
+            dot.className = isSecure ? 'threat-status-dot status-dot-cyan' : 'threat-status-dot status-dot-red';
+        }
         if (statusText) {
             statusText.textContent = isSecure ? 'SECURE' : 'THREAT DETECTED';
             statusText.style.color = isSecure ? 'var(--status-secure)' : 'var(--status-danger)';
@@ -288,3 +298,69 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
+
+/* ── 3D Viewport Controls ── */
+function resetThreatView() {
+    if (window.labNetwork3D) {
+        window.labNetwork3D.resetView();
+    }
+}
+
+function toggleThreatAutoRotate() {
+    if (window.labNetwork3D) {
+        const isRotating = window.labNetwork3D.toggleAutoRotate();
+        const btn = document.getElementById('btn-auto-rotate');
+        if (btn) {
+            btn.classList.toggle('active', isRotating);
+            const pauseIcon = btn.querySelector('.icon-pause');
+            const playIcon = btn.querySelector('.icon-play');
+            if (pauseIcon && playIcon) {
+                pauseIcon.style.display = isRotating ? 'block' : 'none';
+                playIcon.style.display = isRotating ? 'none' : 'block';
+            }
+        }
+    }
+}
+
+function toggleThreatFullscreen() {
+    const wrapper = document.getElementById('threat-canvas-wrapper');
+    const btn = document.getElementById('btn-fullscreen-threat');
+    if (!wrapper) return;
+
+    const isFull = wrapper.classList.toggle('is-fullscreen');
+    if (btn) {
+        btn.classList.toggle('active', isFull);
+        const expIcon = btn.querySelector('.icon-expand');
+        const compIcon = btn.querySelector('.icon-compress');
+        if (expIcon && compIcon) {
+            expIcon.style.display = isFull ? 'none' : 'block';
+            compIcon.style.display = isFull ? 'block' : 'none';
+        }
+    }
+
+    if (window.labNetwork3D) {
+        if (isFull) {
+            window.labNetwork3D.isFullscreen = true;
+            window.labNetwork3D.enableTouch();
+        } else {
+            window.labNetwork3D.isFullscreen = false;
+        }
+        setTimeout(() => window.labNetwork3D.resize(), 60);
+    }
+}
+
+function enableTouchInteraction(e) {
+    if (e) {
+        e.preventDefault();
+        e.stopPropagation();
+    }
+    const overlay = document.getElementById('touch-interact-overlay');
+    if (overlay) {
+        overlay.classList.add('interacted');
+        overlay.style.opacity = '0';
+        setTimeout(() => overlay.remove(), 250);
+    }
+    if (window.labNetwork3D) {
+        window.labNetwork3D.enableTouch();
+    }
+}

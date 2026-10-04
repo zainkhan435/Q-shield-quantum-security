@@ -81,31 +81,73 @@
     <section class="threat-main-grid">
 
         <!-- 3D Quantum Network Viewport (Dark Visualization Panel) -->
-        <div class="threat-3d-panel">
-            <div class="threat-hud-bar">
-                <div class="threat-hud-stage">
-                    <span class="hud-label">PROTOCOL STAGE:</span>
-                    <span id="lab-overlay-stage" class="hud-value text-cyan">Ready for Security Audit</span>
-                </div>
-                <div class="threat-hud-actions">
-                    <button class="btn-hud" onclick="if(window.labNetwork3D) window.labNetwork3D.resetView()">Reset View</button>
-                    <button class="btn-hud" onclick="if(window.labNetwork3D) window.labNetwork3D.toggleAutoRotate()">Auto-Rotate</button>
+        <div class="threat-3d-panel" id="threat-3d-panel">
+            <!-- 1) Status row: PROTOCOL STAGE label above full-width status pill with small status dot -->
+            <div class="threat-status-row">
+                <span class="threat-status-label">PROTOCOL STAGE</span>
+                <div class="threat-status-pill">
+                    <span class="threat-status-dot status-dot-cyan" id="threat-status-dot"></span>
+                    <span id="lab-overlay-stage" class="threat-status-text">Ready for Security Experiment</span>
                 </div>
             </div>
 
-            <!-- Canvas Container -->
-            <div class="threat-canvas-wrapper">
+            <!-- 2) Canvas Container -->
+            <div class="threat-canvas-wrapper" id="threat-canvas-wrapper">
                 <div id="lab-quantum-3d-canvas" class="threat-canvas"></div>
+
+                <!-- Tap to interact hint overlay (Mobile touch protection) -->
+                <div class="touch-interact-overlay" id="touch-interact-overlay" onclick="enableTouchInteraction(event)">
+                    <span>Tap to interact with 3D Globe</span>
+                </div>
+
+                <!-- 3) Fullscreen button at top-right of canvas -->
+                <button type="button" class="canvas-ctrl-btn canvas-ctrl-fullscreen" id="btn-fullscreen-threat" onclick="toggleThreatFullscreen()" aria-label="Toggle fullscreen" title="Toggle Fullscreen">
+                    <svg class="icon-expand" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"></path></svg>
+                    <svg class="icon-compress" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" style="display:none;"><path d="M4 14h6v6M20 10h-6V4M14 10l7-7M10 14l-7 7"></path></svg>
+                </button>
+
+                <!-- Bottom-right: 44x44px circular control buttons (Reset view & Auto-rotate) with 12px margin -->
+                <div class="canvas-ctrl-bottom-right">
+                    <button type="button" class="canvas-ctrl-btn" id="btn-reset-view" onclick="resetThreatView()" aria-label="Reset view" title="Reset view">
+                        <!-- rotate-ccw icon -->
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path><polyline points="3 3 3 8 8 8"></polyline></svg>
+                    </button>
+                    <button type="button" class="canvas-ctrl-btn active" id="btn-auto-rotate" onclick="toggleThreatAutoRotate()" aria-label="Auto-rotate" title="Auto-rotate">
+                        <!-- play/pause icon -->
+                        <svg class="icon-pause" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>
+                        <svg class="icon-play" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" style="display:none;"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                    </button>
+                </div>
             </div>
 
-            <!-- HUD Bottom Indicators -->
-            <div class="threat-hud-footer">
-                <div class="hud-item"><strong style="color: #0f62fe;">●</strong> Alice (Signer)</div>
-                <div class="hud-item"><strong style="color: #10b981;">●</strong> Bob (Verifier 1)</div>
-                <div class="hud-item"><strong style="color: #06b6d4;">●</strong> Charlie (Verifier 2)</div>
-                <div class="hud-item"><strong style="color: #ef4444;">●</strong> Eve (Adversary Intercept)</div>
-                <div class="hud-item"><strong style="color: #00f0ff;">━</strong> Quantum Arc</div>
-                <div class="hud-item"><strong style="color: #f59e0b;">- -</strong> Classical Feed</div>
+            <!-- 4) Legend: moved OUT of canvas into a separate row below it as a compact 2-column card -->
+            <div class="threat-legend-card">
+                <div class="threat-legend-grid">
+                    <div class="legend-grid-item">
+                        <span class="legend-sample dot-alice">●</span>
+                        <span class="legend-text">Alice (Signer)</span>
+                    </div>
+                    <div class="legend-grid-item">
+                        <span class="legend-sample dot-bob">●</span>
+                        <span class="legend-text">Bob (Verifier 1)</span>
+                    </div>
+                    <div class="legend-grid-item">
+                        <span class="legend-sample dot-charlie">●</span>
+                        <span class="legend-text">Charlie (Verifier 2)</span>
+                    </div>
+                    <div class="legend-grid-item">
+                        <span class="legend-sample dot-eve">●</span>
+                        <span class="legend-text">Eve (Adversary Intercept)</span>
+                    </div>
+                    <div class="legend-grid-item">
+                        <span class="legend-sample line-quantum">━</span>
+                        <span class="legend-text">Quantum Arc</span>
+                    </div>
+                    <div class="legend-grid-item">
+                        <span class="legend-sample line-classical">- -</span>
+                        <span class="legend-text">Classical Feed</span>
+                    </div>
+                </div>
             </div>
         </div>
 
