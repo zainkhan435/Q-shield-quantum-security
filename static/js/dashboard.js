@@ -17,10 +17,41 @@ const STAGE_LABELS = {
 
 let latestExperimentData = null;
 
+function setDashboardSkeletons(loading) {
+    const valElements = document.querySelectorAll('.telemetry-val, .telemetry-pill');
+    valElements.forEach(el => {
+        if (loading) {
+            el.classList.add('skeleton');
+        } else {
+            el.classList.remove('skeleton');
+        }
+    });
+}
+
+function toggle3DFullscreen() {
+    const card = document.getElementById('globe-viewport-card');
+    if (!card) return;
+    card.classList.toggle('fullscreen-3d');
+    const isFull = card.classList.contains('fullscreen-3d');
+    const btn = document.getElementById('btn-fullscreen-3d');
+    if (btn) {
+        const span = btn.querySelector('span');
+        if (span) span.textContent = isFull ? 'Exit Full' : 'Fullscreen';
+    }
+    if (window.network3D && typeof window.network3D.onWindowResize === 'function') {
+        setTimeout(() => window.network3D.onWindowResize(), 80);
+    }
+}
+window.toggle3DFullscreen = toggle3DFullscreen;
+
 async function loadDashboardData() {
+    setDashboardSkeletons(true);
     try {
         const response = await fetch('/api/dashboard');
-        if (!response.ok) return;
+        if (!response.ok) {
+            if (typeof showToast === 'function') showToast('Telemetry synchronization failed', 'error');
+            return;
+        }
         const data = await response.json();
         
         latestExperimentData = data.latest_experiment;
@@ -48,6 +79,11 @@ async function loadDashboardData() {
         
     } catch (err) {
         console.error('Failed to load dashboard data:', err);
+        if (typeof showToast === 'function') {
+            showToast('Unable to connect to telemetry service', 'error');
+        }
+    } finally {
+        setDashboardSkeletons(false);
     }
 }
 

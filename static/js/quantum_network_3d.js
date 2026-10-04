@@ -110,6 +110,26 @@ class QuantumNetwork3D {
         this.container.innerHTML = '';
         this.container.appendChild(this.renderer.domElement);
 
+        // Mobile touch interaction overlay (only on small touch screens so mobile users can scroll past)
+        const isTouchScreen = (typeof window !== 'undefined') && (('ontouchstart' in window) || (navigator.maxTouchPoints > 0)) && (window.innerWidth < 768);
+        if (isTouchScreen) {
+            const overlay = document.createElement('div');
+            overlay.className = 'touch-interact-overlay';
+            overlay.innerHTML = '<span>Tap to interact with 3D Globe</span>';
+            const removeOverlay = (e) => {
+                if (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                }
+                overlay.classList.add('interacted');
+                overlay.style.display = 'none';
+                overlay.remove();
+            };
+            overlay.addEventListener('click', removeOverlay);
+            overlay.addEventListener('touchstart', removeOverlay, { passive: false });
+            this.container.appendChild(overlay);
+        }
+
         // Lighting
         const ambientLight = new THREE.AmbientLight(0xffffff, 0.65);
         this.scene.add(ambientLight);
@@ -137,13 +157,40 @@ class QuantumNetwork3D {
         // Interaction
         this.setupInteraction();
 
+        // Reduced motion check
+        try {
+            if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                this.autoRotate = false;
+            }
+        } catch(e) {}
+
+        // State for off-screen / tab hidden pause
+        this.isPaused = false;
+        if ('IntersectionObserver' in window) {
+            this.observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    this.isPaused = !entry.isIntersecting;
+                });
+            }, { threshold: 0.05 });
+            this.observer.observe(this.container);
+        }
+
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                this.isPaused = true;
+            } else if (!this.observer) {
+                this.isPaused = false;
+            }
+        });
+
         // Clock & loop
         this.clock = new THREE.Clock();
         this.animate = this.animate.bind(this);
         this.animate();
 
         // Resize handler
-        window.addEventListener('resize', () => this.resize());
+        this.onWindowResize = this.resize.bind(this);
+        window.addEventListener('resize', this.onWindowResize);
     }
 
     /* ============================================================
@@ -203,8 +250,9 @@ class QuantumNetwork3D {
             this.globeGroup.add(meridian);
         }
 
-        // Distributed Quantum Mesh Nodes on Sphere Surface
-        const meshNodesCount = 64;
+        // Distributed Quantum Mesh Nodes on Sphere Surface (Optimized for mobile)
+        const isMobileScreen = (typeof window !== 'undefined' && window.innerWidth < 768);
+        const meshNodesCount = isMobileScreen ? 32 : 64;
         const meshPoints = [];
         for (let i = 0; i < meshNodesCount; i++) {
             const phi = Math.acos(-1 + (2 * i) / meshNodesCount);
@@ -240,10 +288,11 @@ class QuantumNetwork3D {
             this.globeGroup.add(lineMesh);
         }
 
-        // Outer ambient particle halo
+        // Outer ambient particle halo (scaled for mobile performance)
         const haloGeo = new THREE.BufferGeometry();
         const haloPoints = [];
-        for (let i = 0; i < 120; i++) {
+        const haloCount = isMobileScreen ? 48 : 120;
+        for (let i = 0; i < haloCount; i++) {
             const radius = R * (1.05 + Math.random() * 0.4);
             const theta = Math.random() * Math.PI * 2;
             const phi = Math.acos((Math.random() * 2) - 1);
@@ -770,6 +819,29 @@ class QuantumNetwork3D {
             this.cameraAngle.radius = Math.max(8.0, Math.min(26.0, this.cameraAngle.radius + e.deltaY * 0.015));
             this.updateCameraPosition();
         }, { passive: false });
+
+        // Mobile touch swipe to orbit
+        dom.addEventListener('touchstart', (e) => {
+            if (e.touches.length === 1) {
+                this.prevMouse = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+                this.isDragging = true;
+                this.autoRotate = false;
+            }
+        }, { passive: true });
+
+        dom.addEventListener('touchmove', (e) => {
+            if (!this.isDragging || e.touches.length !== 1) return;
+            const dx = e.touches[0].clientX - this.prevMouse.x;
+            const dy = e.touches[0].clientY - this.prevMouse.y;
+            this.cameraAngle.theta += dx * 0.008;
+            this.cameraAngle.phi = Math.max(-Math.PI / 3, Math.min(Math.PI / 3, this.cameraAngle.phi + dy * 0.008));
+            this.prevMouse = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+            this.updateCameraPosition();
+        }, { passive: true });
+
+        dom.addEventListener('touchend', () => {
+            this.isDragging = false;
+        }, { passive: true });
     }
 
     updateCameraPosition() {
@@ -808,6 +880,7 @@ class QuantumNetwork3D {
     ============================================================ */
     animate() {
         this.animFrameId = requestAnimationFrame(this.animate);
+        if (this.isPaused) return; // Off-screen or tab backgrounded pause for maximum performance
         const delta = this.clock.getDelta();
         const elapsed = this.clock.getElapsedTime();
 

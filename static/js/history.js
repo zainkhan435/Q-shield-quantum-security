@@ -45,19 +45,19 @@ async function loadHistory(page = 1) {
             const timeStr = e.timestamp ? e.timestamp.split(' ')[1] : '--:--:--';
             
             return `
-                <tr onclick="openExperimentDetails(${e.id})" style="cursor: pointer;">
-                    <td class="font-mono text-sm">${timeStr}</td>
-                    <td><strong>${e.attack_type}</strong></td>
-                    <td class="font-mono"><strong>${e.qber_percentage}</strong></td>
-                    <td>
+                <tr data-status="${e.threat_status}" onclick="openExperimentDetails(${e.id})" style="cursor: pointer;">
+                    <td data-label="TIME" class="font-mono text-sm">${timeStr}</td>
+                    <td data-label="SCENARIO"><strong>${e.attack_type}</strong></td>
+                    <td data-label="QBER" class="font-mono"><strong>${e.qber_percentage}</strong></td>
+                    <td data-label="VERIFICATION">
                         <span class="status-indicator-dot ${e.verification_result === 'SUCCESS' ? 'dot-secure' : 'dot-danger'}"></span>
                         <span style="font-weight:600; color: ${e.verification_result === 'SUCCESS' ? 'var(--status-secure)' : 'var(--status-danger)'};">
                             ${e.verification_result}
                         </span>
                     </td>
-                    <td><span class="telemetry-pill ${pillClass}">${e.threat_status}</span></td>
-                    <td class="font-mono text-sm text-muted">${backendShort}</td>
-                    <td>
+                    <td data-label="THREAT STATUS"><span class="telemetry-pill ${pillClass}">${e.threat_status}</span></td>
+                    <td data-label="BACKEND" class="font-mono text-sm text-muted">${backendShort}</td>
+                    <td data-label="ACTION">
                         <button class="btn btn-outline-xs" onclick="event.stopPropagation(); openExperimentDetails(${e.id})">
                             Investigate
                         </button>

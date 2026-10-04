@@ -66,7 +66,7 @@
 
             <!-- Right: Signature 3D Quantum Globe / Network Centerpiece -->
             <div class="hero-globe-container">
-                <div class="globe-viewport-card">
+                <div class="globe-viewport-card" id="globe-viewport-card">
                     <div class="globe-hud-top">
                         <div class="stage-pill">
                             <span class="stage-prefix">PROTOCOL:</span>
@@ -75,13 +75,17 @@
                         <div class="globe-camera-actions">
                             <button class="btn-hud" onclick="if(window.network3D) window.network3D.resetView()" title="Reset 3D Camera">Reset View</button>
                             <button class="btn-hud" onclick="if(window.network3D) window.network3D.toggleAutoRotate()" title="Toggle Auto-Rotation">Auto-Rotate</button>
+                            <button class="btn-hud" id="btn-fullscreen-3d" onclick="toggle3DFullscreen()" title="Toggle Fullscreen">
+                                <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; margin-right: 3px;"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path></svg>
+                                <span>Fullscreen</span>
+                            </button>
                         </div>
                     </div>
 
                     <!-- 3D Canvas Target -->
                     <div id="quantum-3d-canvas" class="globe-3d-canvas"></div>
 
-                    <!-- HUD Bottom Legend -->
+                    <!-- HUD Bottom Legend (Inside 3D Viewport) -->
                     <div class="globe-hud-bottom">
                         <div class="hud-legend-item"><span class="dot dot-alice">●</span> Alice (Signer)</div>
                         <div class="hud-legend-item"><span class="dot dot-bob">●</span> Bob (Verifier 1)</div>
@@ -90,6 +94,16 @@
                         <div class="hud-legend-item"><span class="line line-quantum">━</span> Quantum Arc</div>
                         <div class="hud-legend-item"><span class="line line-classical">- -</span> Classical (c₀, c₁)</div>
                     </div>
+                </div>
+
+                <!-- Theme-Adaptive Legend Chip Row (High-contrast, responsive outside card) -->
+                <div class="legend-chip-row">
+                    <div class="legend-chip"><span class="dot dot-alice">●</span> Alice (Signer)</div>
+                    <div class="legend-chip"><span class="dot dot-bob">●</span> Bob (Verifier 1)</div>
+                    <div class="legend-chip"><span class="dot dot-charlie">●</span> Charlie (Verifier 2)</div>
+                    <div class="legend-chip"><span class="dot dot-eve">●</span> Eve (Adversary)</div>
+                    <div class="legend-chip"><span class="line line-quantum">━</span> Quantum Arc</div>
+                    <div class="legend-chip"><span class="line line-classical">- -</span> Classical Channel</div>
                 </div>
             </div>
         </div>
@@ -101,16 +115,22 @@
     <section class="telemetry-strip-section">
         <div class="telemetry-strip">
             <div class="telemetry-cell">
-                <span class="telemetry-label">OBSERVED QBER</span>
+                <span class="telemetry-label">
+                    OBSERVED QBER
+                    <span class="info-tooltip" tabindex="0">ℹ<span class="tooltip-text">Quantum Bit Error Rate measures orthogonal measurement errors against the 11.0% security cutoff. Expected noise: 3.50% ± 1.2%.</span></span>
+                </span>
                 <div class="telemetry-val-group">
                     <span id="metric-qber" class="telemetry-val">--%</span>
                     <span id="metric-qber-badge" class="telemetry-pill pill-neutral">Calibrating</span>
                 </div>
-                <span class="telemetry-sub">Cutoff Threshold: 11.0%</span>
+                <span class="telemetry-sub">Cutoff: 11.0% · Noise: 3.50% ± 1.2%</span>
             </div>
 
             <div class="telemetry-cell">
-                <span class="telemetry-label">VERIFICATION</span>
+                <span class="telemetry-label">
+                    VERIFICATION
+                    <span class="info-tooltip" tabindex="0">ℹ<span class="tooltip-text">Deterministic parity check between Bob and Charlie to confirm digital signature eigenstate integrity.</span></span>
+                </span>
                 <div class="telemetry-val-group">
                     <span id="metric-validity" class="telemetry-val">STANDBY</span>
                 </div>
@@ -118,7 +138,10 @@
             </div>
 
             <div class="telemetry-cell">
-                <span class="telemetry-label">THREAT STATUS</span>
+                <span class="telemetry-label">
+                    THREAT STATUS
+                    <span class="info-tooltip" tabindex="0">ℹ<span class="tooltip-text">Protocol decision derived from QBER thresholds, Bell parity, and binomial hypothesis testing.</span></span>
+                </span>
                 <div class="telemetry-val-group">
                     <span id="metric-threat-status" class="telemetry-pill pill-secure">SECURE</span>
                 </div>
@@ -134,7 +157,10 @@
             </div>
 
             <div class="telemetry-cell">
-                <span class="telemetry-label">STATISTICAL Z-SCORE</span>
+                <span class="telemetry-label">
+                    STATISTICAL Z-SCORE
+                    <span class="info-tooltip" tabindex="0">ℹ<span class="tooltip-text">Standard deviations from expected baseline noise (3.50% ± 1.2%). Z ≥ 3.0σ statistically detects eavesdropping at 99.7% confidence.</span></span>
+                </span>
                 <div class="telemetry-val-group">
                     <span id="metric-z-score" class="telemetry-val">0.00σ</span>
                     <span id="metric-z-tag" class="telemetry-pill pill-neutral">Nominal</span>
@@ -143,7 +169,10 @@
             </div>
 
             <div class="telemetry-cell">
-                <span class="telemetry-label">FIDELITY / ACCURACY</span>
+                <span class="telemetry-label">
+                    FIDELITY / ACCURACY
+                    <span class="info-tooltip" tabindex="0">ℹ<span class="tooltip-text">Quantum state fidelity Tr[ρσ] measuring overlap with expected signature eigenstate.</span></span>
+                </span>
                 <div class="telemetry-val-group">
                     <span id="metric-accuracy" class="telemetry-val">100.0%</span>
                 </div>

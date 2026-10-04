@@ -1,7 +1,21 @@
 import os
 from pathlib import Path
 
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    # Fallback: manually load .env if python-dotenv not installed
+    _env_path = Path(__file__).resolve().parent / ".env"
+    if _env_path.exists():
+        for _line in _env_path.read_text().splitlines():
+            _line = _line.strip()
+            if _line and not _line.startswith("#") and "=" in _line:
+                _k, _v = _line.split("=", 1)
+                os.environ.setdefault(_k.strip(), _v.strip())
+
 BASE_DIR = Path(__file__).resolve().parent
+
 
 class Config:
     """Base application configuration."""
@@ -31,6 +45,9 @@ class Config:
     IBM_QUANTUM_TOKEN = os.getenv("IBM_QUANTUM_TOKEN", None)
     IBM_QUANTUM_INSTANCE = os.getenv("IBM_QUANTUM_INSTANCE", None)
     IBM_QUANTUM_BACKEND = os.getenv("IBM_QUANTUM_BACKEND", "ibm_brisbane")
+
+    # Optional Google Gemini AI Helpdesk & Copilot
+    GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", None)
 
 class TestConfig(Config):
     """Testing configuration with in-memory database."""

@@ -2,13 +2,28 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>{% block title %}Q-SHIELD | Quantum Security Operations{% endblock %}</title>
+    <script>
+        (function() {
+            try {
+                var savedTheme = localStorage.getItem('qshield_theme');
+                var theme = savedTheme;
+                if (!theme) {
+                    var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+                    theme = prefersDark ? 'dark' : 'light';
+                }
+                document.documentElement.setAttribute('data-theme', theme);
+            } catch(e) {
+                document.documentElement.setAttribute('data-theme', 'dark');
+            }
+        })();
+    </script>
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='favicon.png') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css', v=3) }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css', v=4) }}">
     {% block head %}{% endblock %}
 </head>
 <body class="{% block body_class %}{% endblock %}">
@@ -32,9 +47,13 @@
             </nav>
 
             <div class="nav-user">
+                <button class="theme-toggle-btn" id="theme-toggle-btn" onclick="toggleTheme()" aria-label="Toggle Dark/Light Mode" title="Toggle Theme">
+                    <svg class="sun-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+                    <svg class="moon-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+                </button>
                 <div class="system-status-indicator" title="Local Qiskit Aer Simulator & IBM Quantum Channel Online">
                     <span class="pulse-dot"></span>
-                    <span class="status-label">System Online</span>
+                    <span class="status-label">Online</span>
                 </div>
                 <span class="user-pill" title="Lead Quantum Security Auditor">
                     {{ session.get('user_email', 'admin@qshield.security') }}
@@ -50,17 +69,116 @@
         {% block content %}{% endblock %}
     </main>
 
+    {% if session.get('user_id') %}
+    <!-- Mobile Bottom Tab Bar -->
+    <nav class="bottom-tab-bar" aria-label="Mobile Navigation">
+        <a href="{{ url_for('dashboard.dashboard_view') }}" class="bottom-tab-item {% if request.path == '/dashboard' %}active{% endif %}">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+            <span>Overview</span>
+        </a>
+        <a href="{{ url_for('dashboard.lab_view') }}" class="bottom-tab-item {% if request.path in ['/lab', '/quantum-lab'] %}active{% endif %}">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 2v7.31M14 2v7.31M8.5 2h7M14 9.3a6.5 6.5 0 1 1-4 0"></path></svg>
+            <span>Lab</span>
+        </a>
+        <a href="{{ url_for('dashboard.experiment_view') }}" class="bottom-tab-item {% if request.path in ['/threat-detection', '/experiment'] %}active{% endif %}">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+            <span>Threats</span>
+        </a>
+        <a href="{{ url_for('dashboard.history_view') }}" class="bottom-tab-item {% if request.path == '/history' %}active{% endif %}">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+            <span>History</span>
+        </a>
+        <a href="{{ url_for('dashboard.documentation_view') }}" class="bottom-tab-item {% if request.path == '/documentation' %}active{% endif %}">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+            <span>More</span>
+        </a>
+    </nav>
+    {% endif %}
+
     <!-- Toast Notifications -->
     <div id="toast-container" class="toast-container" aria-live="polite" aria-atomic="true"></div>
 
-    <!-- Core App Logic -->
-    <script>
-        // Ensure legacy dark theme preferences are cleared so default light theme is applied
-        localStorage.removeItem('theme');
-        localStorage.removeItem('dark-mode');
-        document.body.classList.remove('dark-theme', 'dark-mode');
-    </script>
+    <!-- Gemini AI Quantum Copilot Floating Widget -->
+    <button id="gemini-copilot-btn" class="gemini-copilot-trigger" onclick="toggleGeminiCopilot()" title="Ask Q-SHIELD Quantum Copilot (Gemini AI)">
+        <svg class="gemini-sparkle" viewBox="0 0 24 24" width="20" height="20" fill="none">
+            <path d="M12 2L14.5 9.5L22 12L14.5 14.5L12 22L9.5 14.5L2 12L9.5 9.5L12 2Z" fill="url(#gemini-grad)"/>
+            <defs>
+                <linearGradient id="gemini-grad" x1="2" y1="2" x2="22" y2="22" gradientUnits="userSpaceOnUse">
+                    <stop stop-color="#38BDF8"/>
+                    <stop offset="0.5" stop-color="#818CF8"/>
+                    <stop offset="1" stop-color="#C084FC"/>
+                </linearGradient>
+            </defs>
+        </svg>
+        <span class="copilot-label">Ask me anything</span>
+        <span class="copilot-badge">AI</span>
+        <span class="copilot-tooltip-hint" id="copilot-hint">Need help? Tap here! ✨</span>
+    </button>
+
+    <!-- Gemini AI Chat Window -->
+    <div id="gemini-copilot-modal" class="gemini-copilot-modal" aria-hidden="true">
+        <div class="copilot-header">
+            <div class="copilot-header-info">
+                <div class="copilot-avatar">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none">
+                        <path d="M12 2L14.5 9.5L22 12L14.5 14.5L12 22L9.5 14.5L2 12L9.5 9.5L12 2Z" fill="url(#gemini-grad-h)"/>
+                        <defs>
+                            <linearGradient id="gemini-grad-h" x1="2" y1="2" x2="22" y2="22" gradientUnits="userSpaceOnUse">
+                                <stop stop-color="#38BDF8"/>
+                                <stop offset="0.5" stop-color="#818CF8"/>
+                                <stop offset="1" stop-color="#C084FC"/>
+                            </linearGradient>
+                        </defs>
+                    </svg>
+                </div>
+                <div class="copilot-title-group">
+                    <h3>Q-SHIELD Copilot</h3>
+                    <div class="copilot-status-sub">
+                        <span class="copilot-status-dot"></span>
+                        <span>Gemini 3.8 Flash</span>
+                    </div>
+                </div>
+            </div>
+            <button type="button" id="copilot-close-btn" class="copilot-close-btn" aria-label="Close Chat">&times;</button>
+        </div>
+
+        <div id="copilot-messages" class="copilot-messages">
+            <div class="copilot-msg copilot-msg-model">
+                <div class="copilot-bubble">
+                    <p style="margin:0 0 8px;"><strong>Welcome to Q-SHIELD Quantum Copilot.</strong></p>
+                    <p style="margin:0 0 10px; color: var(--text-secondary);">Ask me anything about quantum digital signatures, Bell state entanglement, or protocol threat vectors:</p>
+                    <div class="copilot-chips-row">
+                        <button type="button" class="copilot-chip" data-prompt="How does Q-SHIELD detect Eve?">🕵️ Detecting Eve</button>
+                        <button type="button" class="copilot-chip" data-prompt="Explain the 11% QBER cutoff">📊 11% QBER Cutoff</button>
+                        <button type="button" class="copilot-chip" data-prompt="How does the Z-score test work?">📐 3.0σ Z-Score</button>
+                        <button type="button" class="copilot-chip" data-prompt="Explain Bennett's 1993 teleportation protocol">🚀 Teleportation</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="copilot-input-area">
+            <form id="copilot-form" class="copilot-form">
+                <input 
+                    type="text" 
+                    id="copilot-input" 
+                    class="copilot-input" 
+                    placeholder="Ask about quantum protocols, QBER..." 
+                    autocomplete="off"
+                >
+                <button type="submit" id="copilot-send-btn" class="copilot-send-btn" aria-label="Send message">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="22" y1="2" x2="11" y2="13"></line>
+                        <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                    </svg>
+                </button>
+            </form>
+            <span class="copilot-footnote">Q-SHIELD AI · Deterministic Security Copilot</span>
+        </div>
+    </div>
+
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/copilot.js') }}"></script>
     {% block scripts %}{% endblock %}
 </body>
 </html>

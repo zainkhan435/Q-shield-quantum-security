@@ -198,7 +198,7 @@
                     <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none">
                         <polygon points="5 3 19 12 5 21 5 3"></polygon>
                     </svg>
-                    <span>EXECUTE ATTACK AUDIT</span>
+                    <span>Run Security Experiment</span>
                 </button>
             </form>
         </div>
@@ -228,9 +228,12 @@
         <!-- Evidence Grid -->
         <div class="evidence-metrics-grid mt-4">
             <div class="evidence-cell">
-                <span class="ev-label">OBSERVED QBER</span>
+                <span class="ev-label">
+                    OBSERVED QBER
+                    <span class="info-tooltip" tabindex="0">ℹ<span class="tooltip-text">Quantum Bit Error Rate against the 11.0% security cutoff. Expected natural noise: 3.50% ± 1.2%.</span></span>
+                </span>
                 <span id="res-qber" class="ev-val font-mono">--%</span>
-                <span class="ev-sub">Cutoff Threshold: 11.0%</span>
+                <span class="ev-sub">Cutoff: 11.0% · Noise: 3.50% ± 1.2%</span>
             </div>
 
             <div class="evidence-cell">
@@ -246,7 +249,10 @@
             </div>
 
             <div class="evidence-cell">
-                <span class="ev-label">STATISTICAL DEVIATION</span>
+                <span class="ev-label">
+                    STATISTICAL DEVIATION
+                    <span class="info-tooltip" tabindex="0">ℹ<span class="tooltip-text">Binomial Z-score deviation from expected error rate. Z ≥ 3.0σ confirms eavesdropping with 99.7% confidence.</span></span>
+                </span>
                 <span id="res-z-score" class="ev-val font-mono">--σ</span>
                 <span id="res-z-badge" class="ev-sub">Confidence Limit: 3.0σ</span>
             </div>

@@ -1,3 +1,7 @@
+import os
+import json
+import urllib.request
+import urllib.error
 import math
 import random
 import numpy as np
@@ -611,3 +615,169 @@ def lab_measure():
         "p1": round((c1 / total) * 100, 1),
         "total_shots": total
     })
+
+# ============================================================
+# GEMINI AI QUANTUM HELPDESK & COPILOT ENDPOINT
+# ============================================================
+@api_bp.route("/chat", methods=["POST"])
+def gemini_chat():
+    """Gemini AI Quantum Helpdesk & Copilot assistant."""
+    data = request.get_json(silent=True) or {}
+    user_msg = (data.get("message") or "").strip()
+    history = data.get("history") or []
+    
+    if not user_msg:
+        return jsonify({"success": False, "error": "Message cannot be empty."}), 400
+        
+    api_key = os.environ.get("GEMINI_API_KEY", "").strip()
+    import sys
+    print(f"[Copilot] API key present: {bool(api_key)}, length: {len(api_key)}", file=sys.stderr, flush=True)
+    
+    # 1. If GEMINI_API_KEY is available, call the official Gemini REST API
+    if api_key:
+        try:
+            # Build conversation history in Google GenAI format
+            contents = []
+            for h in history[-6:]: # Keep recent context
+                role = "user" if h.get("role") == "user" else "model"
+                contents.append({
+                    "role": role,
+                    "parts": [{"text": str(h.get("content", ""))}]
+                })
+            contents.append({
+                "role": "user",
+                "parts": [{"text": user_msg}]
+            })
+            
+            system_instruction = (
+                "You are Q-SHIELD Quantum Copilot, an advanced AI assistant powered by Gemini, "
+                "integrated into the Q-SHIELD quantum-security platform (Smart India Hackathon 2026, SIH26141). "
+                "You can answer ANY question the user asks — general knowledge, programming, science, math, cybersecurity, or casual conversation. "
+                "You are especially expert in: Quantum Digital Signatures (QDS), Bennett's 1993 teleportation protocol, "
+                "Bell state entanglement, QBER with 11.0% cutoff, Z-score hypothesis testing (3.0 sigma), "
+                "Qiskit quantum simulation, and adversarial threat detection (Eve, forgery, replay, impersonation, decoherence). "
+                "Format responses in clean markdown with headers, bold, code blocks, and bullet points. Be helpful, concise, and accurate."
+            )
+
+            req_body = {
+                "system_instruction": {
+                    "parts": [{"text": system_instruction}]
+                },
+                "contents": contents,
+                "generationConfig": {
+                    "temperature": 0.5,
+                    "maxOutputTokens": 2048
+                }
+            }
+            
+            models_to_try = ["gemini-3.8-flash", "gemini-flash-lite-latest", "gemini-flash-latest"]
+            last_error = None
+            
+            for model_name in models_to_try:
+                try:
+                    url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={api_key}"
+                    req = urllib.request.Request(
+                        url,
+                        data=json.dumps(req_body).encode("utf-8"),
+                        headers={"Content-Type": "application/json"},
+                        method="POST"
+                    )
+                    
+                    with urllib.request.urlopen(req, timeout=30) as resp:
+                        result = json.loads(resp.read().decode("utf-8"))
+                        candidates = result.get("candidates", [])
+                        if candidates and "content" in candidates[0]:
+                            reply = candidates[0]["content"]["parts"][0]["text"]
+                            return jsonify({
+                                "success": True,
+                                "reply": reply,
+                                "source": model_name
+                            })
+                except Exception as e:
+                    last_error = e
+                    print(f"[Gemini {model_name}]: {type(e).__name__}: {e}", file=sys.stderr, flush=True)
+                    continue
+            
+            if last_error:
+                print(f"[Gemini] All models failed, using fallback", file=sys.stderr, flush=True)
+        except Exception as outer_e:
+            print(f"[Gemini] Outer error: {outer_e}", file=sys.stderr, flush=True)
+
+    # 2. Intelligent Built-in Quantum Expert Knowledge Engine (Offline / Demo Fallback)
+    q = user_msg.lower()
+    
+    if any(k in q for k in ["eve", "intercept", "tap", "eavesdrop"]):
+        reply = (
+            "### 🕵️ Intercept & Resend Attack (Eve)\n\n"
+            "In Q-SHIELD, when an adversary **Eve** attempts to tap the in-flight qubit on the quantum channel:\n\n"
+            "1. **Wavefunction Collapse**: Eve's projective measurement forces the entangled Bell pair $|\Phi^+\\rangle = \\frac{|00\\rangle + |11\\rangle}{\\sqrt{2}}$ into an orthogonal basis state.\n"
+            "2. **Error Induction**: This collapse induces a Quantum Bit Error Rate (QBER) of approximately **25% to 50%**.\n"
+            "3. **Detection**: Because this drastically exceeds the theoretical **11.0% cutoff limit**, Bob's projective measurement parity check fails, flagging the session with `ATTACK DETECTED`."
+        )
+    elif any(k in q for k in ["qber", "error rate", "11%", "cutoff", "noise"]):
+        reply = (
+            "### 📊 Quantum Bit Error Rate (QBER)\n\n"
+            "QBER measures the ratio of orthogonal measurement outcomes (errors) to total transmitted shots:\n\n"
+            "$$\\text{QBER} = \\frac{N_{\\text{error}}}{N_{\\text{total}}}$$\n\n"
+            "- **Expected Channel Noise**: $3.50\\% \\pm 1.2\\%$ (nominal background decoherence).\n"
+            "- **Theoretical Cutoff Threshold**: **11.0%**.\n"
+            "- **Security Decision**: Under the Shor-Preskill / BB84 security bounds, error rates below 11.0% allow classical error correction and privacy amplification. Any error rate above 11.0% indicates active eavesdropping."
+        )
+    elif any(k in q for k in ["z-score", "zscore", "sigma", "statistical", "deviation", "hypothesis"]):
+        reply = (
+            "### 📐 Binomial Statistical Z-Score ($Z \\ge 3.0\\sigma$)\n\n"
+            "Q-SHIELD strictly adheres to a **deterministic zero AI/ML policy** using binomial hypothesis testing:\n\n"
+            "$$Z = \\frac{|\\text{QBER} - e_0|}{\\sigma}, \\quad \\sigma = \\sqrt{\\frac{e_0(1 - e_0)}{N}}$$\n\n"
+            "- **Confidence Limit**: $Z \\ge 3.0\\sigma$ corresponding to $p < 0.0027$ ($99.7\\%$ confidence).\n"
+            "- If observed errors depart from calibrated baseline noise by 3 or more standard deviations, the protocol deterministically halts without relying on black-box neural networks."
+        )
+    elif any(k in q for k in ["teleport", "bennett", "protocol", "how it works"]):
+        reply = (
+            "### 🚀 Bennett et al. (1993) Quantum Teleportation\n\n"
+            "Q-SHIELD models signature transmission through Bennett's 3-qubit teleportation scheme:\n\n"
+            "1. **State Synthesis**: Alice prepares target signature qubit $|\\psi\\rangle = \\cos(\\theta/2)|0\\rangle + e^{i\\phi}\\sin(\\theta/2)|1\\rangle$.\n"
+            "2. **Entangled Bridge**: Alice and Bob share an EPR Bell pair $|\\Phi^+\\rangle$.\n"
+            "3. **Bell Measurement**: Alice performs joint CNOT and Hadamard operations on $(q_0, q_1)$ and measures them, yielding 2 classical bits $(c_0, c_1)$.\n"
+            "4. **Pauli Reconstruction**: Bob applies the unitary correction $X^{c_1} Z^{c_0}$ to his qubit $q_2$, reconstructing the exact original state without physical qubit transit."
+        )
+    elif any(k in q for k in ["replay", "nonce", "uuid"]):
+        reply = (
+            "### 🔄 Replay Attack Protection\n\n"
+            "Even if an adversary captures the classical transmission bits $(c_0, c_1)$, Q-SHIELD halts replay attacks using an immutable **cryptographic single-use Nonce Ledger** in SQLite:\n\n"
+            "- Every signature session generates a unique UUIDv4 nonce token.\n"
+            "- Upon verification, the token status transitions to `CONSUMED`.\n"
+            "- If an adversary re-transmits the captured token, the ledger detects nonce collision and issues a `REPLAY DETECTED` verdict."
+        )
+    elif any(k in q for k in ["forgery", "tamper", "alter"]):
+        reply = (
+            "### ✍️ Quantum Signature Forgery Detection\n\n"
+            "If an attacker attempts to alter the document or substitute an unverified quantum signature:\n\n"
+            "- The forged state lacks the required conjugate basis alignment.\n"
+            "- Multi-party projective verification between Bob and Charlie detects an eigenstate mismatch.\n"
+            "- QBER approaches $\\approx 100\\%$ in conjugate bases, yielding `SIGNATURE INVALID`."
+        )
+    elif any(k in q for k in ["hardware", "ibm", "qiskit"]):
+        reply = (
+            "### ⚛️ Backend Simulation & Hardware\n\n"
+            "- **Primary Engine**: Qiskit Aer 2.5 `AerSimulator` running statevector and density-matrix simulations with depolarizing noise models.\n"
+            "- **Hardware Layer**: Modular IBM Quantum integration (`ibm/backend.py`) supporting real cloud dispatch to IBM Eagle/Heron processors when configured via `IBM_QUANTUM_TOKEN`."
+        )
+    else:
+        api_tip = "💡 *Tip: Add `GEMINI_API_KEY=your_key` to `.env` to unlock unrestricted live Gemini 1.5 Flash conversational intelligence.*" if not api_key else ""
+        reply = (
+            f"### 🛡️ Q-SHIELD Quantum Copilot\n\n"
+            f"Hello! I am your quantum security copilot for SIH26141. I can assist you with:\n\n"
+            f"- **Protocol Mechanics**: Teleportation pipelines, Bell pairs, Pauli corrections ($X^{{c_1}}Z^{{c_0}}$).\n"
+            f"- **Threat Vectors**: Eve interception, replay attacks, signature forgery, depolarizing noise.\n"
+            f"- **Mathematical Formulations**: QBER bounds ($11.0\\%$), binomial $Z$-score hypothesis testing ($3.0\\sigma$).\n"
+            f"- **Lab Guide**: Using the 3D Bloch sphere, state synthesis, and threat simulations.\n\n"
+            f"Try asking: *'How does Q-SHIELD detect Eve?'* or *'Explain the 11% QBER cutoff.'*\n\n"
+            f"{api_tip}"
+        )
+        
+    return jsonify({
+        "success": True,
+        "reply": reply,
+        "source": "knowledge-engine" if not api_key else "gemini-1.5-flash"
+    })
+
