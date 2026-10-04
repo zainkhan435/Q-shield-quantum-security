@@ -5228,140 +5228,23 @@ body.landing-page-body .main-content {
     }
 }
 
-@media (max-width: 360px) {
-    .nav-brand .brand-sub {
-        display: none !important;
-    }
-    .nav-container {
-        padding: 0 10px;
-    }
-    .nav-user {
-        gap: 6px;
-    }
-
-    /* Hero section */
-    .hero-grid {
-        grid-template-columns: 1fr;
-        gap: 16px;
-    }
-
-    .hero-editorial {
-        padding-right: 0;
-    }
-
-    .hero-title {
-        font-size: 1.8rem;
-    }
-
-    .hero-tagline {
-        font-size: 0.78rem;
-    }
-
-    .hero-description {
-        font-size: 0.9rem;
-    }
-
-    .hero-actions {
-        flex-direction: column;
-        margin-bottom: 20px;
-    }
-
-    .hero-actions .btn {
-        width: 100%;
-    }
-
-    .hero-badges {
-        flex-direction: column;
-        gap: 10px;
-        align-items: flex-start;
-    }
-
-    .badge-divider {
-        display: none;
-    }
-
-    /* Globe - mobile standalone box (<768px and <640px) */
-    .globe-viewport-card {
-        height: 320px;
-        border-radius: 16px;
-        overflow: hidden;
-    }
-
-    .stage-header-row {
-        margin-bottom: 8px;
-    }
-
-    .stage-pill {
-        min-height: 44px;
-        padding: 8px 12px;
-        border-radius: 12px;
-    }
-
-    .stage-prefix {
-        font-size: 0.7rem;
-        display: inline-block;
-    }
-
-    .stage-name {
-        font-size: 0.78rem;
-        line-height: 1.35;
-        white-space: normal;
-        overflow: visible;
-        text-overflow: clip;
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        -webkit-box-orient: vertical;
-        word-break: break-word;
-    }
-
-    .globe-floating-controls {
-        bottom: 12px;
-        right: 12px;
-        gap: 8px;
-    }
-
-    .btn-globe-ctrl {
-        width: 44px;
-        height: 44px;
-        min-width: 44px;
-        min-height: 44px;
-    }
-
-    .btn-globe-ctrl svg {
-        width: 22px;
-        height: 22px;
-    }
-
-    .legend-chip-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 8px;
-        margin-top: 10px;
-    }
-
-    .legend-chip {
-        padding: 6px 8px;
-        font-size: 12px;
-        gap: 6px;
-    }
-
-    .legend-chip-text {
-        font-size: 12px;
-    }
-
-    /* Mobile Stat Panel (<640px) - Separate Equal-Height Cards */
+/* ---- MOBILE TELEMETRY GRID (<640px) ---- */
+@media (max-width: 639px) {
+    /* Mobile Stat Panel - Separate Equal-Height Cards */
     .telemetry-strip {
         background: transparent !important;
         border: none !important;
         box-shadow: none !important;
         display: grid !important;
-        grid-template-columns: 1fr 1fr !important;
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
         gap: 12px !important;
         overflow: visible !important;
+        width: 100% !important;
     }
 
     .telemetry-cell {
         background: var(--bg-surface);
-        border: 1px solid var(--border-subtle);
+        border: 1px solid var(--border-subtle) !important;
         border-radius: 14px;
         padding: 14px;
         box-sizing: border-box;
@@ -5371,8 +5254,6 @@ body.landing-page-body .main-content {
         align-items: stretch;
         min-width: 0;
         height: 100%;
-        border-right: 1px solid var(--border-subtle);
-        border-bottom: 1px solid var(--border-subtle);
     }
 
     .telemetry-label {
@@ -5529,6 +5410,128 @@ body.landing-page-body .main-content {
     .cell-fidelity .label-short {
         display: inline;
     }
+}
+
+@media (max-width: 360px) {
+    .nav-brand .brand-sub {
+        display: none !important;
+    }
+    .nav-container {
+        padding: 0 10px;
+    }
+    .nav-user {
+        gap: 6px;
+    }
+
+    /* Hero section */
+    .hero-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+
+    .hero-editorial {
+        padding-right: 0;
+    }
+
+    .hero-title {
+        font-size: 1.8rem;
+    }
+
+    .hero-tagline {
+        font-size: 0.78rem;
+    }
+
+    .hero-description {
+        font-size: 0.9rem;
+    }
+
+    .hero-actions {
+        flex-direction: column;
+        margin-bottom: 20px;
+    }
+
+    .hero-actions .btn {
+        width: 100%;
+    }
+
+    .hero-badges {
+        flex-direction: column;
+        gap: 10px;
+        align-items: flex-start;
+    }
+
+    .badge-divider {
+        display: none;
+    }
+
+    /* Globe - mobile standalone box (<768px and <640px) */
+    .globe-viewport-card {
+        height: 320px;
+        border-radius: 16px;
+        overflow: hidden;
+    }
+
+    .stage-header-row {
+        margin-bottom: 8px;
+    }
+
+    .stage-pill {
+        min-height: 44px;
+        padding: 8px 12px;
+        border-radius: 12px;
+    }
+
+    .stage-prefix {
+        font-size: 0.7rem;
+        display: inline-block;
+    }
+
+    .stage-name {
+        font-size: 0.78rem;
+        line-height: 1.35;
+        white-space: normal;
+        overflow: visible;
+        text-overflow: clip;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        word-break: break-word;
+    }
+
+    .globe-floating-controls {
+        bottom: 12px;
+        right: 12px;
+        gap: 8px;
+    }
+
+    .btn-globe-ctrl {
+        width: 44px;
+        height: 44px;
+        min-width: 44px;
+        min-height: 44px;
+    }
+
+    .btn-globe-ctrl svg {
+        width: 22px;
+        height: 22px;
+    }
+
+    .legend-chip-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+        margin-top: 10px;
+    }
+
+    .legend-chip {
+        padding: 6px 8px;
+        font-size: 12px;
+        gap: 6px;
+    }
+
+    .legend-chip-text {
+        font-size: 12px;
+    }
+
 
     /* 3D HUD Reset Button mobile: icon only */
     .btn-hud,
