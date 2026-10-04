@@ -275,145 +275,117 @@
     </div>
 
     <!-- ============================================================
-         VIEW 2: RESEARCHER AUTHENTICATION (TWO-COLUMN PROFESSIONAL PORTAL)
+         VIEW 2: RESEARCHER AUTHENTICATION (CENTERED CLASSICAL LOGIN)
     ============================================================ -->
     <div id="view-auth" class="landing-auth-view" style="display: none;">
-        <div class="auth-page-container">
+        
+        <!-- Floating particles background (CSS-only) -->
+        <div class="auth-bg-particles" aria-hidden="true">
+            <div class="auth-particle auth-particle-1"></div>
+            <div class="auth-particle auth-particle-2"></div>
+            <div class="auth-particle auth-particle-3"></div>
+        </div>
+
+        <!-- Single centered login card -->
+        <div class="auth-centered-card">
             
-            <!-- Left Side: Scientific & Security Overview -->
-            <div class="auth-left-brand">
-                <div class="auth-brand-top">
-                    <div class="auth-brand-logo">
-                        <span class="auth-logo-text">Q-SHIELD</span>
-                        <span class="landing-badge">SIH26141</span>
-                    </div>
-                    <div class="auth-mission-badge">SECURE RESEARCH ACCESS</div>
-                    <h2 class="auth-left-title">Access the Quantum-Security Simulation Environment</h2>
-                    <p class="auth-left-desc">
-                        Run quantum protocol experiments, evaluate digital-signature threats, and inspect deterministic security analysis.
-                    </p>
-                </div>
-
-                <div class="auth-highlights-list">
-                    <div class="auth-highlight-item">
-                        <div class="highlight-bullet"></div>
-                        <div class="highlight-content">
-                            <strong class="highlight-title">Qiskit Quantum Simulation</strong>
-                            <p class="highlight-text">Full statevector matrix calculation simulating pure and mixed density states.</p>
-                        </div>
-                    </div>
-                    <div class="auth-highlight-item">
-                        <div class="highlight-bullet"></div>
-                        <div class="highlight-content">
-                            <strong class="highlight-title">QBER-Based Threat Analysis</strong>
-                            <p class="highlight-text">Real-time detection against theoretical 11.0% cutoff bounds.</p>
-                        </div>
-                    </div>
-                    <div class="auth-highlight-item">
-                        <div class="highlight-bullet"></div>
-                        <div class="highlight-content">
-                            <strong class="highlight-title">Persistent Security Experiment History</strong>
-                            <p class="highlight-text">Cryptographic SQLite audit ledger tracking all states, nonces, and verdicts.</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="auth-left-footer">
-                    <span>Smart India Hackathon 2026 · Problem Statement SIH26141</span>
+            <!-- Top bar -->
+            <div class="auth-card-topbar">
+                <button type="button" class="btn-back-landing" onclick="showLandingView()">
+                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                    Back
+                </button>
+                <div class="auth-topbar-right">
+                    <button class="theme-toggle-btn" id="auth-theme-toggle" onclick="toggleTheme()" aria-label="Toggle Dark/Light Mode" title="Toggle Theme">
+                        <svg class="sun-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+                        <svg class="moon-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+                    </button>
                 </div>
             </div>
 
-            <!-- Right Side: Authentication Form -->
-            <div class="auth-right-form">
-                <div class="auth-card-top">
-                    <button type="button" class="btn-back-landing" onclick="showLandingView()">
-                        ← Back to Platform Overview
-                    </button>
-                    <div style="display: flex; align-items: center; gap: 0.5rem;">
-                        <button class="theme-toggle-btn" id="auth-theme-toggle" onclick="toggleTheme()" aria-label="Toggle Dark/Light Mode" title="Toggle Theme">
-                            <svg class="sun-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
-                            <svg class="moon-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
-                        </button>
-                        <span class="font-mono text-xs text-primary font-bold">STAGE 02 / AUTHENTICATION</span>
-                    </div>
+            <!-- Brand header -->
+            <div class="auth-card-brand">
+                <div class="auth-shield-icon">
+                    <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                        <circle cx="12" cy="11" r="3"></circle>
+                    </svg>
+                </div>
+                <h2 class="auth-card-title">Q-SHIELD</h2>
+                <p class="auth-card-subtitle">Researcher Authentication Portal</p>
+                <div class="auth-status-pill">
+                    <span class="auth-status-dot"></span>
+                    <span class="auth-status-text">SECURE · QUANTUM-ENCRYPTED</span>
+                </div>
+            </div>
+
+            <!-- Error alerts -->
+            <div id="login-alert" class="alert alert-error" style="display: none;"></div>
+            {% if error %}
+            <div class="alert alert-error">{{ error }}</div>
+            {% endif %}
+
+            <!-- Login form -->
+            <form id="login-form" class="auth-login-form" onsubmit="handleLoginSubmit(event)">
+                <div class="form-group">
+                    <label for="email" class="form-label">Researcher Email</label>
+                    <input 
+                        type="email" 
+                        id="email" 
+                        name="email" 
+                        class="form-control" 
+                        placeholder="admin@qshield.security" 
+                        required 
+                        autocomplete="email"
+                    >
                 </div>
 
-                <div class="auth-header">
-                    <div class="auth-icon-box">
-                        <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-                            <circle cx="12" cy="11" r="3"></circle>
+                <div class="form-group">
+                    <label for="password" class="form-label">Security Key / Password</label>
+                    <input 
+                        type="password" 
+                        id="password" 
+                        name="password" 
+                        class="form-control" 
+                        placeholder="••••••••••••" 
+                        required 
+                        autocomplete="current-password"
+                    >
+                </div>
+
+                <button type="submit" id="login-btn" class="btn btn-primary btn-block btn-lg auth-submit-btn">
+                    <span class="btn-text">SIGN IN →</span>
+                    <span class="btn-spinner" style="display: none;"></span>
+                </button>
+            </form>
+
+            <!-- Judge access -->
+            <div class="judge-access-container">
+                <button type="button" class="judge-toggle-btn" onclick="toggleJudgeAccess()">
+                    <svg viewBox="0 0 24 24" width="13" height="13" stroke="currentColor" stroke-width="2" fill="none"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                    <span>Judge / Evaluator Access</span>
+                    <svg class="judge-chevron" viewBox="0 0 24 24" width="11" height="11" stroke="currentColor" stroke-width="2" fill="none"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                </button>
+                <div id="demo-credentials-card" class="demo-credentials-card judge-hidden">
+                    <div class="demo-cred-header">
+                        <svg viewBox="0 0 24 24" width="13" height="13" stroke="currentColor" stroke-width="2" fill="none">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="12" y1="16" x2="12" y2="12"></line>
+                            <line x1="12" y1="8" x2="12.01" y2="8"></line>
                         </svg>
+                        <span>HACKATHON DEMO ACCESS</span>
                     </div>
-                    <h2 class="auth-title">RESEARCHER AUTHENTICATION</h2>
-                    <p class="auth-subtitle">Sign in to access Q-SHIELD operations & quantum lab</p>
+                    <div class="demo-cred-details">
+                        <div>Email: <code>admin@qshield.security</code></div>
+                        <div>Password: <code>QShield@2026</code></div>
+                    </div>
+                    <button type="button" class="btn-link-demo" onclick="fillDemoCredentials()">Autofill Demo Credentials</button>
                 </div>
+            </div>
 
-                <div id="login-alert" class="alert alert-error" style="display: none;"></div>
-                {% if error %}
-                <div class="alert alert-error">{{ error }}</div>
-                {% endif %}
-
-                <form id="login-form" class="login-form" onsubmit="handleLoginSubmit(event)">
-                    <div class="form-group">
-                        <label for="email" class="form-label">Researcher Email</label>
-                        <input 
-                            type="email" 
-                            id="email" 
-                            name="email" 
-                            class="form-control" 
-                            placeholder="admin@qshield.security" 
-                            required 
-                            autocomplete="email"
-                        >
-                    </div>
-
-                    <div class="form-group">
-                        <label for="password" class="form-label">Security Key / Password</label>
-                        <input 
-                            type="password" 
-                            id="password" 
-                            name="password" 
-                            class="form-control" 
-                            placeholder="••••••••••••" 
-                            required 
-                            autocomplete="current-password"
-                        >
-                    </div>
-
-                    <button type="submit" id="login-btn" class="btn btn-primary btn-block btn-lg mt-3">
-                        <span class="btn-text">SIGN IN • ENTER QUANTUM LAB →</span>
-                        <span class="btn-spinner" style="display: none;"></span>
-                    </button>
-                </form>
-
-                <!-- Hackathon Evaluator Quick Access Card (Protected by Judge Toggle) -->
-                <div class="judge-access-container mt-3">
-                    <button type="button" class="judge-toggle-btn" onclick="toggleJudgeAccess()">
-                        <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
-                        <span>Judge / Evaluator Access</span>
-                        <svg class="judge-chevron" viewBox="0 0 24 24" width="12" height="12" stroke="currentColor" stroke-width="2" fill="none"><polyline points="6 9 12 15 18 9"></polyline></svg>
-                    </button>
-                    <div id="demo-credentials-card" class="demo-credentials-card judge-hidden">
-                        <div class="demo-cred-header">
-                            <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none">
-                                <circle cx="12" cy="12" r="10"></circle>
-                                <line x1="12" y1="16" x2="12" y2="12"></line>
-                                <line x1="12" y1="8" x2="12.01" y2="8"></line>
-                            </svg>
-                            <span>HACKATHON DEMO ACCESS</span>
-                        </div>
-                        <div class="demo-cred-details">
-                            <div>Email: <code>admin@qshield.security</code></div>
-                            <div>Password: <code>QShield@2026</code></div>
-                        </div>
-                        <button type="button" class="btn-link-demo" onclick="fillDemoCredentials()">Autofill Demo Credentials</button>
-                    </div>
-                </div>
-
-                <div class="auth-card-footer">
-                    <span>Egreen Quanta LLP · Quantum Cybersecurity Research</span>
-                </div>
+            <!-- Footer -->
+            <div class="auth-card-bottom">
+                <span>SIH 2026 · Egreen Quanta LLP · Quantum Cybersecurity</span>
             </div>
 
         </div>
