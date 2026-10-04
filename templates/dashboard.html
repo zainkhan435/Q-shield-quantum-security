@@ -66,44 +66,72 @@
 
             <!-- Right: Signature 3D Quantum Globe / Network Centerpiece -->
             <div class="hero-globe-container">
-                <div class="globe-viewport-card" id="globe-viewport-card">
-                    <div class="globe-hud-top">
-                        <div class="stage-pill">
-                            <span class="stage-prefix">PROTOCOL:</span>
-                            <span id="overlay-stage-text" class="stage-name">01 STATE PREPARATION: Alice preparing state |ψ⟩</span>
-                        </div>
-                        <div class="globe-camera-actions">
-                            <button class="btn-hud" onclick="if(window.network3D) window.network3D.resetView()" title="Reset 3D Camera">Reset View</button>
-                            <button class="btn-hud" onclick="if(window.network3D) window.network3D.toggleAutoRotate()" title="Toggle Auto-Rotation">Auto-Rotate</button>
-                            <button class="btn-hud" id="btn-fullscreen-3d" onclick="toggle3DFullscreen()" title="Toggle Fullscreen">
-                                <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; margin-right: 3px;"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path></svg>
-                                <span>Fullscreen</span>
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- 3D Canvas Target -->
-                    <div id="quantum-3d-canvas" class="globe-3d-canvas"></div>
-
-                    <!-- HUD Bottom Legend (Inside 3D Viewport) -->
-                    <div class="globe-hud-bottom">
-                        <div class="hud-legend-item"><span class="dot dot-alice">●</span> Alice (Signer)</div>
-                        <div class="hud-legend-item"><span class="dot dot-bob">●</span> Bob (Verifier 1)</div>
-                        <div class="hud-legend-item"><span class="dot dot-charlie">●</span> Charlie (Verifier 2)</div>
-                        <div class="hud-legend-item"><span class="dot dot-eve">●</span> Eve (Adversary)</div>
-                        <div class="hud-legend-item"><span class="line line-quantum">━</span> Quantum Arc</div>
-                        <div class="hud-legend-item"><span class="line line-classical">- -</span> Classical (c₀, c₁)</div>
+                <!-- Header row contains only the stage status: full width, min-height 44px, 2-line wrap -->
+                <div class="stage-header-row">
+                    <div class="stage-pill" id="stage-status-pill">
+                        <span class="stage-prefix">PROTOCOL:</span>
+                        <span id="overlay-stage-text" class="stage-name">01 STATE PREPARATION: Alice preparing state |ψ⟩</span>
                     </div>
                 </div>
 
-                <!-- Theme-Adaptive Legend Chip Row (High-contrast, responsive outside card) -->
-                <div class="legend-chip-row">
-                    <div class="legend-chip"><span class="dot dot-alice">●</span> Alice (Signer)</div>
-                    <div class="legend-chip"><span class="dot dot-bob">●</span> Bob (Verifier 1)</div>
-                    <div class="legend-chip"><span class="dot dot-charlie">●</span> Charlie (Verifier 2)</div>
-                    <div class="legend-chip"><span class="dot dot-eve">●</span> Eve (Adversary)</div>
-                    <div class="legend-chip"><span class="line line-quantum">━</span> Quantum Arc</div>
-                    <div class="legend-chip"><span class="line line-classical">- -</span> Classical Channel</div>
+                <!-- 3D Standalone Box Card: height 320px on mobile, overflow hidden, border-radius 16px -->
+                <div class="globe-viewport-card" id="globe-viewport-card">
+                    <!-- 3D Canvas Target -->
+                    <div id="quantum-3d-canvas" class="globe-3d-canvas"></div>
+
+                    <!-- Tap to interact mobile touch overlay (shown when touch mode is inactive) -->
+                    <div id="globe-touch-overlay" class="globe-touch-overlay">
+                        <button type="button" class="btn-touch-interact" id="btn-touch-interact" aria-label="Tap to interact with 3D Globe">
+                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+                            </svg>
+                            <span>Tap to interact</span>
+                        </button>
+                    </div>
+
+                    <!-- Touch mode active indicator bar with Done button -->
+                    <div id="globe-touch-active-bar" class="globe-touch-active-bar" style="display: none;">
+                        <span class="touch-hint-text">1-finger rotate · Pinch zoom</span>
+                        <button type="button" class="btn-touch-done" id="btn-touch-done" aria-label="Finish 3D interaction">Done</button>
+                    </div>
+
+                    <!-- Floating Control Buttons: ONE row overlaid at bottom-right of canvas, 12px margin, 8px gap -->
+                    <div class="globe-floating-controls">
+                        <button type="button" class="btn-globe-ctrl" id="btn-reset-view" onclick="if(window.network3D) window.network3D.resetView()" title="Reset view" aria-label="Reset view">
+                            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
+                                <path d="M3 3v5h5"/>
+                            </svg>
+                        </button>
+                        <button type="button" class="btn-globe-ctrl active" id="btn-auto-rotate" onclick="if(window.network3D) { const active = window.network3D.toggleAutoRotate(); this.classList.toggle('active', active); const p = this.querySelector('.icon-pause'); const l = this.querySelector('.icon-play'); if(p) p.style.display = active ? 'block' : 'none'; if(l) l.style.display = active ? 'none' : 'block'; }" title="Auto-rotate toggle" aria-label="Toggle auto-rotate">
+                            <svg class="icon-pause" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <rect x="6" y="4" width="4" height="16" rx="1"/>
+                                <rect x="14" y="4" width="4" height="16" rx="1"/>
+                            </svg>
+                            <svg class="icon-play" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none;" aria-hidden="true">
+                                <polygon points="5 3 19 12 5 21 5 3"/>
+                            </svg>
+                        </button>
+                        <button type="button" class="btn-globe-ctrl" id="btn-fullscreen-3d" onclick="toggle3DFullscreen()" title="Fullscreen" aria-label="Toggle fullscreen">
+                            <svg class="icon-expand" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/>
+                            </svg>
+                            <svg class="icon-shrink" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none;" aria-hidden="true">
+                                <path d="M4 14h6v6M20 10h-6V4M14 10l7-7M10 14l-7 7"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Merged tidy 2-column legend grid below canvas: 12-13px, no wrap, equal widths -->
+                <div class="legend-chip-grid">
+                    <div class="legend-chip" title="Alice (Signer)"><span class="dot dot-alice">●</span><span class="legend-chip-text">Alice (Signer)</span></div>
+                    <div class="legend-chip" title="Bob (Verifier 1)"><span class="dot dot-bob">●</span><span class="legend-chip-text">Bob (Verifier 1)</span></div>
+                    <div class="legend-chip" title="Charlie (Verifier 2)"><span class="dot dot-charlie">●</span><span class="legend-chip-text">Charlie (Verifier 2)</span></div>
+                    <div class="legend-chip" title="Eve (Adversary)"><span class="dot dot-eve">●</span><span class="legend-chip-text">Eve (Adversary)</span></div>
+                    <div class="legend-chip" title="Quantum Arc"><span class="legend-sample line-quantum"></span><span class="legend-chip-text">Quantum Arc</span></div>
+                    <div class="legend-chip" title="Classical Channel"><span class="legend-sample line-classical"></span><span class="legend-chip-text">Classical Channel</span></div>
                 </div>
             </div>
         </div>

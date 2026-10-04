@@ -35,11 +35,26 @@ function toggle3DFullscreen() {
     const isFull = card.classList.contains('fullscreen-3d');
     const btn = document.getElementById('btn-fullscreen-3d');
     if (btn) {
-        const span = btn.querySelector('span');
-        if (span) span.textContent = isFull ? 'Exit Full' : 'Fullscreen';
+        const iconExpand = btn.querySelector('.icon-expand');
+        const iconShrink = btn.querySelector('.icon-shrink');
+        if (iconExpand && iconShrink) {
+            iconExpand.style.display = isFull ? 'none' : 'block';
+            iconShrink.style.display = isFull ? 'block' : 'none';
+        }
+        btn.setAttribute('title', isFull ? 'Exit Fullscreen' : 'Fullscreen');
+        btn.setAttribute('aria-label', isFull ? 'Exit Fullscreen' : 'Fullscreen');
+        btn.classList.toggle('active', isFull);
     }
-    if (window.network3D && typeof window.network3D.onWindowResize === 'function') {
-        setTimeout(() => window.network3D.onWindowResize(), 80);
+    if (window.network3D) {
+        window.network3D.isFullscreen = isFull;
+        if (isFull) {
+            window.network3D.enableTouchInteraction();
+        } else {
+            window.network3D.disableTouchInteraction();
+        }
+        if (typeof window.network3D.resize === 'function') {
+            setTimeout(() => window.network3D.resize(), 80);
+        }
     }
 }
 window.toggle3DFullscreen = toggle3DFullscreen;

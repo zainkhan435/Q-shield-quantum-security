@@ -32,13 +32,16 @@ class QuantumNetwork3D {
         // Camera control state
         this.isDragging = false;
         this.isPanning = false;
+        this.isPinching = false;
         this.prevMouse = { x: 0, y: 0 };
+        this.initialPinchDist = 0;
+        this.initialPinchRadius = 21.0;
         const isMobileScreen = (typeof window !== 'undefined') && (window.innerWidth < 640);
-        this.defaultCamera = { theta: 0.15, phi: 0.22, radius: isMobileScreen ? 18.8 : 15.5 };
+        this.defaultCamera = { theta: 0.15, phi: 0.22, radius: isMobileScreen ? 21.0 : 16.0 };
         this.cameraAngle = { ...this.defaultCamera };
-        this.cameraTarget = (typeof THREE !== 'undefined' && typeof THREE.Vector3 === 'function') ? new THREE.Vector3(0, 0.2, 0) : null;
+        this.cameraTarget = (typeof THREE !== 'undefined' && typeof THREE.Vector3 === 'function') ? new THREE.Vector3(0, 0.15, 0) : null;
         this.autoRotate = this.options.autoRotate;
-        this.touchEnabled = !isMobileScreen;
+        this.touchInteractionActive = false;
         this.isFullscreen = false;
 
         // Protocol state
@@ -98,20 +101,22 @@ class QuantumNetwork3D {
 
         // Camera
         this.camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
-        this.cameraTarget = new THREE.Vector3(0, 0.2, 0);
+        this.cameraTarget = new THREE.Vector3(0, 0.15, 0);
         this.updateCameraPosition();
 
         // Renderer
         this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false, powerPreference: "high-performance" });
         this.renderer.setSize(width, height);
-        this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
         this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
         this.renderer.toneMappingExposure = 1.1;
         this.renderer.domElement.style.width = '100%';
         this.renderer.domElement.style.height = '100%';
         this.renderer.domElement.style.display = 'block';
-        const isTouchScreen = (typeof window !== 'undefined') && (('ontouchstart' in window) || (navigator.maxTouchPoints > 0)) && (window.innerWidth < 768);
-        this.renderer.domElement.style.touchAction = isTouchScreen ? 'pan-y' : 'none';
+        this.renderer.domElement.style.touchAction = 'pan-y';
+        this.renderer.domElement.style.userSelect = 'none';
+        this.renderer.domElement.style.webkitUserSelect = 'none';
+        this.renderer.domElement.style.webkitTouchCallout = 'none';
         this.container.innerHTML = '';
         this.container.appendChild(this.renderer.domElement);
 
@@ -173,9 +178,18 @@ class QuantumNetwork3D {
         this.animate = this.animate.bind(this);
         this.animate();
 
-        // Resize handler
+        // Resize handlers
         this.onWindowResize = this.resize.bind(this);
         window.addEventListener('resize', this.onWindowResize);
+        window.addEventListener('orientationchange', () => {
+            setTimeout(this.onWindowResize, 100);
+        });
+        if (window.ResizeObserver) {
+            this.resizeObserver = new ResizeObserver(() => {
+                this.resize();
+            });
+            this.resizeObserver.observe(this.container);
+        }
     }
 
     /* ============================================================
@@ -315,7 +329,7 @@ class QuantumNetwork3D {
             subrole: "State Prep & Bell Measurement",
             color: 0x0f62fe, // Electric Blue
             position: posAlice,
-            leaderOffset: new THREE.Vector3(-1.2, 1.4, 0)
+            leaderOffset: new THREE.Vector3(-1.1, 1.15, 0)
         });
 
         // Bob (Verifier 1) - Front Right
@@ -328,7 +342,7 @@ class QuantumNetwork3D {
             subrole: "Pauli Correction & Projection",
             color: 0x10b981, // Secure Green
             position: posBob,
-            leaderOffset: new THREE.Vector3(1.2, 1.4, 0)
+            leaderOffset: new THREE.Vector3(1.1, 1.15, 0)
         });
 
         // Charlie (Verifier 2) - Lower Center-Right (adjusted Y for complete viewport visibility)
@@ -341,7 +355,7 @@ class QuantumNetwork3D {
             subrole: "Multiparty Cross-Check",
             color: 0x06b6d4, // Cyan
             position: posCharlie,
-            leaderOffset: new THREE.Vector3(1.2, -1.0, 0)
+            leaderOffset: new THREE.Vector3(1.1, -1.0, 0)
         });
 
         // Eve (Attacker) - Midpoint above Alice and Bob (no overlap)
@@ -354,7 +368,7 @@ class QuantumNetwork3D {
             subrole: "Quantum Intercept & Resend",
             color: 0xef4444, // Threat Red
             position: posEve,
-            leaderOffset: new THREE.Vector3(0, 1.5, 0),
+            leaderOffset: new THREE.Vector3(0, 1.45, 0),
             isEve: true
         });
 
@@ -439,40 +453,40 @@ class QuantumNetwork3D {
 
         // Billboard badge on top of leader line (crisp readable label with dark backdrop)
         const canvas = document.createElement('canvas');
-        canvas.width = 340;
-        canvas.height = 130;
+        canvas.width = 300;
+        canvas.height = 96;
         const ctx = canvas.getContext('2d');
 
         // Background pill
         ctx.fillStyle = 'rgba(8, 12, 20, 0.92)';
-        ctx.strokeStyle = isEve ? '#ef4444' : 'rgba(56, 189, 248, 0.4)';
+        ctx.strokeStyle = isEve ? '#ef4444' : (color === 0x0f62fe ? 'rgba(56, 189, 248, 0.6)' : (color === 0x10b981 ? 'rgba(16, 185, 129, 0.6)' : 'rgba(6, 182, 212, 0.6)'));
         ctx.lineWidth = 3;
-        this.roundRect(ctx, 4, 4, 332, 122, 14, true, true);
+        this.roundRect(ctx, 4, 4, 292, 88, 12, true, true);
 
         // Accent indicator
         ctx.fillStyle = isEve ? '#ef4444' : (color === 0x0f62fe ? '#0f62fe' : (color === 0x10b981 ? '#10b981' : '#06b6d4'));
         ctx.beginPath();
-        ctx.arc(36, 44, 9, 0, Math.PI * 2);
+        ctx.arc(32, 34, 7, 0, Math.PI * 2);
         ctx.fill();
 
         // Title (Node Name)
         ctx.fillStyle = '#ffffff';
-        ctx.font = 'bold 30px Inter, sans-serif';
+        ctx.font = 'bold 26px Inter, sans-serif';
         ctx.textAlign = 'left';
-        ctx.fillText(name.toUpperCase(), 58, 52);
+        ctx.fillText(name.toUpperCase(), 50, 42);
 
         // Role with subtle identity glyph (at least 11-12px equivalent on screen)
         ctx.fillStyle = isEve ? '#fca5a5' : (color === 0x0f62fe ? '#93c5fd' : (color === 0x10b981 ? '#6ee7b7' : '#67e8f9'));
-        ctx.font = '600 22px "JetBrains Mono", monospace';
-        ctx.fillText(roleGlyph || role, 36, 94);
+        ctx.font = '600 18px "JetBrains Mono", monospace';
+        ctx.fillText(roleGlyph || role, 30, 74);
 
         const texture = new THREE.CanvasTexture(canvas);
         texture.minFilter = THREE.LinearFilter;
         const spriteMat = new THREE.SpriteMaterial({ map: texture, transparent: true, depthTest: false });
         const sprite = new THREE.Sprite(spriteMat);
         sprite.position.copy(leaderOffset);
-        sprite.position.y += 0.35;
-        sprite.scale.set(2.6, 1.0, 1);
+        sprite.position.y += 0.22;
+        sprite.scale.set(2.2, 0.72, 1);
         group.add(sprite);
 
         this.globeGroup.add(group);
@@ -805,39 +819,120 @@ class QuantumNetwork3D {
             this.updateCameraPosition();
         }, { passive: false });
 
-        // Mobile touch swipe to orbit (only when touch interaction enabled or in fullscreen)
+        // Touch Interaction: single finger orbit, pinch-to-zoom
         dom.addEventListener('touchstart', (e) => {
-            if (!this.touchEnabled && !this.isFullscreen) return;
+            if (!this.touchInteractionActive && !this.isFullscreen) {
+                this.enableTouchInteraction();
+            }
+            if (!this.touchInteractionActive && !this.isFullscreen) return;
+
             if (e.touches.length === 1) {
-                this.prevMouse = { x: e.touches[0].clientX, y: e.touches[0].clientY };
                 this.isDragging = true;
+                this.isPinching = false;
+                this.prevMouse = { x: e.touches[0].clientX, y: e.touches[0].clientY };
                 this.autoRotate = false;
                 const btn = document.getElementById('btn-auto-rotate');
-                if (btn) btn.classList.remove('active');
+                if (btn) {
+                    btn.classList.remove('active');
+                    const pauseIcon = btn.querySelector('.icon-pause');
+                    const playIcon = btn.querySelector('.icon-play');
+                    if (pauseIcon) pauseIcon.style.display = 'none';
+                    if (playIcon) playIcon.style.display = 'block';
+                }
+            } else if (e.touches.length === 2) {
+                this.isDragging = false;
+                this.isPinching = true;
+                this.initialPinchDist = Math.hypot(
+                    e.touches[0].clientX - e.touches[1].clientX,
+                    e.touches[0].clientY - e.touches[1].clientY
+                );
+                this.initialPinchRadius = this.cameraAngle.radius;
             }
         }, { passive: true });
 
         dom.addEventListener('touchmove', (e) => {
-            if (!this.touchEnabled && !this.isFullscreen) return;
-            if (!this.isDragging || e.touches.length !== 1) return;
-            const dx = e.touches[0].clientX - this.prevMouse.x;
-            const dy = e.touches[0].clientY - this.prevMouse.y;
-            this.cameraAngle.theta += dx * 0.008;
-            this.cameraAngle.phi = Math.max(-Math.PI / 3, Math.min(Math.PI / 3, this.cameraAngle.phi + dy * 0.008));
-            this.prevMouse = { x: e.touches[0].clientX, y: e.touches[0].clientY };
-            this.updateCameraPosition();
+            if (!this.touchInteractionActive && !this.isFullscreen) return;
+
+            if (e.touches.length === 1 && this.isDragging) {
+                e.preventDefault();
+                const dx = e.touches[0].clientX - this.prevMouse.x;
+                const dy = e.touches[0].clientY - this.prevMouse.y;
+                this.cameraAngle.theta += dx * 0.007;
+                this.cameraAngle.phi = Math.max(-Math.PI / 2.8, Math.min(Math.PI / 2.8, this.cameraAngle.phi + dy * 0.007));
+                this.prevMouse = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+                this.updateCameraPosition();
+            } else if (e.touches.length === 2 && this.isPinching) {
+                e.preventDefault();
+                const dist = Math.hypot(
+                    e.touches[0].clientX - e.touches[1].clientX,
+                    e.touches[0].clientY - e.touches[1].clientY
+                );
+                if (this.initialPinchDist > 0) {
+                    const scale = this.initialPinchDist / Math.max(15, dist);
+                    this.cameraAngle.radius = Math.max(8.0, Math.min(32.0, this.initialPinchRadius * scale));
+                    this.updateCameraPosition();
+                }
+            }
+        }, { passive: false });
+
+        dom.addEventListener('touchend', (e) => {
+            if (e.touches.length < 2) this.isPinching = false;
+            if (e.touches.length === 0) this.isDragging = false;
         }, { passive: true });
 
-        dom.addEventListener('touchend', () => {
-            this.isDragging = false;
-        }, { passive: true });
+        // Touch overlay triggers
+        const btnInteract = document.getElementById('btn-touch-interact');
+        if (btnInteract) {
+            btnInteract.addEventListener('click', (e) => {
+                e.stopPropagation();
+                this.enableTouchInteraction();
+            });
+        }
+        const btnDone = document.getElementById('btn-touch-done');
+        if (btnDone) {
+            btnDone.addEventListener('click', (e) => {
+                e.stopPropagation();
+                this.disableTouchInteraction();
+            });
+        }
+
+        // Tap outside to exit touch interaction
+        document.addEventListener('pointerdown', (e) => {
+            if (!this.touchInteractionActive || this.isFullscreen) return;
+            const card = document.getElementById('globe-viewport-card');
+            if (card && !card.contains(e.target)) {
+                this.disableTouchInteraction();
+            }
+        });
     }
 
-    enableTouch() {
-        this.touchEnabled = true;
+    enableTouchInteraction() {
+        this.touchInteractionActive = true;
         if (this.renderer && this.renderer.domElement) {
             this.renderer.domElement.style.touchAction = 'none';
         }
+        const overlay = document.getElementById('globe-touch-overlay');
+        if (overlay) overlay.style.display = 'none';
+        const activeBar = document.getElementById('globe-touch-active-bar');
+        if (activeBar && !this.isFullscreen) activeBar.style.display = 'flex';
+    }
+
+    disableTouchInteraction() {
+        if (this.isFullscreen) return;
+        this.touchInteractionActive = false;
+        this.isDragging = false;
+        this.isPinching = false;
+        if (this.renderer && this.renderer.domElement) {
+            this.renderer.domElement.style.touchAction = 'pan-y';
+        }
+        const overlay = document.getElementById('globe-touch-overlay');
+        if (overlay) overlay.style.display = 'block';
+        const activeBar = document.getElementById('globe-touch-active-bar');
+        if (activeBar) activeBar.style.display = 'none';
+    }
+
+    enableTouch() {
+        this.enableTouchInteraction();
     }
 
     updateCameraPosition() {
@@ -853,7 +948,7 @@ class QuantumNetwork3D {
         this.cameraAngle = {
             theta: 0.15,
             phi: 0.22,
-            radius: isMobileScreen ? 18.8 : 15.5
+            radius: isMobileScreen ? 21.0 : 16.0
         };
         this.cameraTarget.set(0, 0.15, 0);
         this.updateCameraPosition();
@@ -863,10 +958,8 @@ class QuantumNetwork3D {
             btn.classList.add('active');
             const pauseIcon = btn.querySelector('.icon-pause');
             const playIcon = btn.querySelector('.icon-play');
-            if (pauseIcon && playIcon) {
-                pauseIcon.style.display = 'block';
-                playIcon.style.display = 'none';
-            }
+            if (pauseIcon) pauseIcon.style.display = 'block';
+            if (playIcon) playIcon.style.display = 'none';
         }
     }
 
@@ -882,11 +975,21 @@ class QuantumNetwork3D {
         if (width === 0 || height === 0) return;
 
         this.camera.aspect = width / height;
-        if (width < 640 && !this.isFullscreen) {
-            this.cameraAngle.radius = Math.max(18.5, 15.5 * (1.35 / Math.max(0.75, width / height)));
+        const isMobile = width < 640;
+        if (isMobile && !this.isFullscreen) {
+            const fovRad = (this.camera.fov * Math.PI) / 360;
+            const targetSpan = 7.6;
+            const distV = targetSpan / Math.tan(fovRad);
+            const distH = targetSpan / (Math.tan(fovRad) * (width / height));
+            this.cameraAngle.radius = Math.max(distV, distH, 20.5);
+            this.cameraTarget.set(0, 0.15, 0);
+        } else if (!this.isFullscreen) {
+            this.cameraAngle.radius = 16.0;
+            this.cameraTarget.set(0, 0.2, 0);
         }
         this.camera.updateProjectionMatrix();
-        this.renderer.setSize(width, height);
+        this.renderer.setSize(width, height, false);
+        this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
         this.updateCameraPosition();
     }
 
@@ -1048,28 +1151,28 @@ class QuantumNetwork3D {
     updateNodeBadge(node, title, role, color = '#ffffff', roleColor = '#60a5fa') {
         if (!node || !node.sprite) return;
         const canvas = document.createElement('canvas');
-        canvas.width = 320;
-        canvas.height = 120;
+        canvas.width = 300;
+        canvas.height = 96;
         const ctx = canvas.getContext('2d');
 
         ctx.fillStyle = 'rgba(8, 12, 20, 0.92)';
         ctx.strokeStyle = color;
         ctx.lineWidth = 3;
-        this.roundRect(ctx, 4, 4, 312, 112, 12, true, true);
+        this.roundRect(ctx, 4, 4, 292, 88, 12, true, true);
 
         ctx.fillStyle = color;
         ctx.beginPath();
-        ctx.arc(32, 40, 8, 0, Math.PI * 2);
+        ctx.arc(32, 34, 7, 0, Math.PI * 2);
         ctx.fill();
 
         ctx.fillStyle = '#ffffff';
         ctx.font = 'bold 26px Inter, sans-serif';
         ctx.textAlign = 'left';
-        ctx.fillText(title.toUpperCase(), 52, 48);
+        ctx.fillText(title.toUpperCase(), 50, 42);
 
         ctx.fillStyle = roleColor;
-        ctx.font = '600 19px "JetBrains Mono", monospace';
-        ctx.fillText(role, 32, 86);
+        ctx.font = '600 18px "JetBrains Mono", monospace';
+        ctx.fillText(role, 30, 74);
 
         const tex = new THREE.CanvasTexture(canvas);
         tex.minFilter = THREE.LinearFilter;
